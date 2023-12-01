@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mnp1/config/helpers/establishments_helper.dart';
-import 'package:mnp1/screens/establishment_types_screen.dart';
+import 'package:mnp1/config/files.dart';
 
 class SyncScreen extends StatelessWidget {
   SyncScreen({super.key});
@@ -19,6 +18,7 @@ class SyncScreen extends StatelessWidget {
 class _ButtonsView extends StatelessWidget {
   _ButtonsView();
   final tipoEst = EstablishmentTypesHelper();
+  final establecimientos = EstablishmentsHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +76,16 @@ class _ButtonsView extends StatelessWidget {
 
   void _loaddata() async {
     await tipoEst.loadFromApiAndSave();
+    // await establecimientos.loadFromApiAndSaveEstablishments();
   }
 
   void _getdata() async {
     await tipoEst.getData();
+    // await establecimientos.getEstablishments();
   }
 
   void _deletedata() async {
     await tipoEst.deleteData();
+    // await establecimientos.deleteEstablishments();
   }
 }

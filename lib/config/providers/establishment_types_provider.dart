@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mnp1/config/helpers/establishments_helper.dart';
+import 'package:mnp1/config/helpers/establishment_types_helper.dart';
 import 'package:mnp1/config/models/establishment_types_model.dart';
 
 class EstablishmentTypesProvider with ChangeNotifier {

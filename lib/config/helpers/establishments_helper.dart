@@ -7,62 +7,64 @@ import 'package:http/http.dart';
 class EstablishmentsHelper {
   Database? _database;
 
-  Future<Database?> get database async {
+  Future<Database?> get databaseEstabs async {
     if (_database != null) return _database;
 
-    _database = await initDatabase();
+    _database = await initDatabaseEstablishments();
     return _database;
   }
 
-  Future<Database> initDatabase() async {
-    String databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'establecimientos.db');
+  Future<Database> initDatabaseEstablishments() async {
+    String databasesPathEstablishments = await getDatabasesPath();
+    String path = join(databasesPathEstablishments, 'establecimientos.db');
 
-    return await openDatabase(path, version: 2, onCreate: _onCreate);
+    return await openDatabase(path,
+        version: 4, onCreate: _onCreateEstablishments);
   }
 
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''CREATE TABLE establecimientos (
-          id INTEGER PRIMARY KEY,
-          EST_nombre INTEGER, 
-          TES_tipo TEXT
-          EST_id INTEGER
-          EST_direccion TEXT
-          EST_departamento TEXT
-          EST_provincia TEXT
-          EST_municipio TEXT
-          )''');
+  Future<void> _onCreateEstablishments(Database dbEst, int version) async {
+    await dbEst.execute('''CREATE TABLE establecimientos (
+      id INTEGER PRIMARY KEY,
+      EST_nombre TEXT,
+      TES_tipo TEXT,
+      EST_id INTEGER,
+      EST_direccion TEXT,
+      EST_departamento TEXT,
+      EST_provincia TEXT,
+      EST_municipio TEXT)''');
   }
 
-  Future<void> loadFromApiAndSave() async {
-    final response = await get(
+  Future<void> loadFromApiAndSaveEstablishments() async {
+    final responseEstablishments = await get(
       Uri.parse(
           'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
     );
 
-    if (response.statusCode == 200) {
-      List<dynamic> apiData = json.decode(response.body);
-      List<EstablishmentsModel> tiposEstabs =
-          apiData.map((data) => EstablishmentsModel.fromMap(data)).toList();
+    if (responseEstablishments.statusCode == 200) {
+      List<dynamic> apiDataEstablishments =
+          json.decode(responseEstablishments.body);
+      List<EstablishmentsModel> establishments = apiDataEstablishments
+          .map((data) => EstablishmentsModel.fromMap(data))
+          .toList();
 
       // Guardar los datos en la base de datos
-      for (var tipoEst in tiposEstabs) {
-        await insertData(tipoEst);
+      for (var ests in establishments) {
+        await insertDataEstablishments(ests);
       }
-      print('Datos insertados');
+      print('establecimientos insertados');
     } else {
       throw Exception('Error al cargar datos desde la API');
     }
   }
 
-  Future<int> insertData(EstablishmentsModel tipoEst) async {
-    Database? db = await database;
-    return await db!.insert('establecimientos', tipoEst.toMap());
+  Future<int> insertDataEstablishments(EstablishmentsModel ests) async {
+    Database? dbEst = await databaseEstabs;
+    return await dbEst!.insert('establecimientos', ests.toMap());
   }
 
-  Future<List<EstablishmentsModel>> getData() async {
-    Database? db = await database;
-    List<Map<String, dynamic>> maps = await db!.query('establecimientos');
+  Future<List<EstablishmentsModel>> getEstablishments() async {
+    Database? dbEst = await databaseEstabs;
+    List<Map<String, dynamic>> maps = await dbEst!.query('establecimientos');
 
     print(maps);
     return List.generate(maps.length, (i) {
@@ -70,10 +72,10 @@ class EstablishmentsHelper {
     });
   }
 
-  Future<int> deleteData() async {
-    Database? db = await database;
+  Future<int> deleteEstablishments() async {
+    Database? dbEst = await databaseEstabs;
 
-    print('Datos eliminados');
-    return await db!.delete('establecimientos');
+    print('Establecimientos eliminados');
+    return await dbEst!.delete('establecimientos');
   }
 }
