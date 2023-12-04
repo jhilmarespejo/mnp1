@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/app_theme.dart';
 import 'package:mnp1/config/providers/establishment_types_provider.dart';
-import 'package:mnp1/config/providers/establishments_provider.dart';
 import 'package:mnp1/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -19,12 +18,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) => EstablishmentsProvider()),
+            create: (context) => EstablishmentTypesProvider()),
         // Agrega más providers según sea necesario
-        ChangeNotifierProvider(create: (context) => EstablishmentTypesProvider()),
+        // ChangeNotifierProvider(create: (context) => EstablishmentsProvider()),
       ],
       child: MaterialApp(
-        theme: AppTheme(selectedColor: 3).getTheme(),
+        theme: AppTheme(selectedColor: 5).getTheme(),
         navigatorKey: AppConstants.globalNavKey,
         debugShowCheckedModeBanner: false,
         home: const Splash(),

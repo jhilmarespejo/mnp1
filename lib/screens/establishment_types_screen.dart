@@ -61,18 +61,11 @@ class _EstablishmentsWidget extends StatelessWidget {
                             child: Text(type.tesTipo),
                           ),
                           icon: const Icon(Icons.arrow_forward_ios_outlined),
-                          onPressed: () {},
+                          onPressed: () {
+                            
+                          },
                         );
-                        // return Card(
-                        //   elevation: 3,
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.all(12.0),
-                        //     child: Text(
-                        //       type.tesTipo,
-                        //       style: const TextStyle(fontSize: 18),
-                        //     ),
-                        //   ),
-                        // );
+                       
                       },
                     ),
                   );

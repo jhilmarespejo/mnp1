@@ -66,7 +66,7 @@ class EstablishmentsHelper {
     Database? dbEst = await databaseEstabs;
     List<Map<String, dynamic>> maps = await dbEst!.query('establecimientos');
 
-    print(maps);
+    print(dbEst);
     return List.generate(maps.length, (i) {
       return EstablishmentsModel.fromMap(maps[i]);
     });

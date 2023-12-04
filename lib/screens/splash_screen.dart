@@ -17,14 +17,14 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
 
   startTime() async {
-    var _duration = const Duration(seconds: 1);
+    var _duration = const Duration(seconds: 2);
     return Timer(_duration, navigationPage);
   }
 
   void navigationPage() {
-    Navigator.of(context).push(
-        // MaterialPageRoute(builder: (context) => const UserListScreen()));
-        MaterialPageRoute(builder: (context) => SyncScreen()));
+      Navigator.of(context).push(
+      // MaterialPageRoute(builder: (context) => const UserListScreen()));
+      MaterialPageRoute(builder: (context) => SyncScreen()));
   }
 
   @override

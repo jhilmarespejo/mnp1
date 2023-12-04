@@ -15,8 +15,16 @@ class SyncScreen extends StatelessWidget {
   }
 }
 
-class _ButtonsView extends StatelessWidget {
+class _ButtonsView extends StatefulWidget {
   _ButtonsView();
+
+  @override
+  State<_ButtonsView> createState() => _ButtonsViewState();
+}
+
+class _ButtonsViewState extends State<_ButtonsView> {
+  bool isLoading = false;
+
   final tipoEst = EstablishmentTypesHelper();
   final establecimientos = EstablishmentsHelper();
 
@@ -28,7 +36,48 @@ class _ButtonsView extends StatelessWidget {
       width: double.infinity,
       child: Column(
         // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-
+        // children: [
+        //   isLoading
+        //       ? const CircularProgressIndicator()
+        //       : FilledButton.icon(
+        //           icon: const Icon(Icons.cloud_sync_outlined),
+        //           label: const Text('Sincronizar datos'),
+        //           onPressed: () {
+        //             _loaddata();
+        //           },
+        //         ),
+        //   FilledButton.icon(
+        //     icon: const Icon(Icons.get_app_sharp),
+        //     label: const Text('Consultar datos'),
+        //     onPressed: () {
+        //       _getdata();
+        //     },
+        //   ),
+        //   FilledButton.icon(
+        //     icon: const Icon(Icons.delete),
+        //     label: const Text('Limpiar datos'),
+        //     onPressed: () {
+        //       _deletedata();
+        //     },
+        //   ),
+        //   FilledButton.icon(
+        //     icon: const Icon(Icons.delete),
+        //     label: const Text('Consulta X'),
+        //     onPressed: () {
+        //       _queryX();
+        //     },
+        //   ),
+        //   const SizedBox(
+        //     height: 150,
+        //   ),
+        //   FilledButton.icon(
+        //     icon: const Icon(Icons.get_app_sharp),
+        //     label: const Text('Iniciar'),
+        //     onPressed: () {
+        //       _navigateTipoEstablecimientos(context);
+        //     },
+        //   ),
+        // ],
         children: [
           FilledButton.icon(
             icon: const Icon(Icons.cloud_sync_outlined),
@@ -49,6 +98,13 @@ class _ButtonsView extends StatelessWidget {
             label: const Text('Limpiar datos'),
             onPressed: () {
               _deletedata();
+            },
+          ),
+          FilledButton.icon(
+            icon: const Icon(Icons.delete),
+            label: const Text('Consulta X'),
+            onPressed: () {
+              _queryX();
             },
           ),
           const SizedBox(
@@ -76,16 +132,18 @@ class _ButtonsView extends StatelessWidget {
 
   void _loaddata() async {
     await tipoEst.loadFromApiAndSave();
-    // await establecimientos.loadFromApiAndSaveEstablishments();
+    //await establecimientos.loadFromApiAndSaveEstablishments();
   }
 
   void _getdata() async {
     await tipoEst.getData();
-    // await establecimientos.getEstablishments();
+  }
+
+  void _queryX() async {
+    await tipoEst.queryx();
   }
 
   void _deletedata() async {
     await tipoEst.deleteData();
-    // await establecimientos.deleteEstablishments();
   }
 }
