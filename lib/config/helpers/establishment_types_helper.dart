@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:mnp1/config/models/establishment_types_model.dart';
 import 'package:mnp1/config/models/establishments_model.dart';
 import 'package:path/path.dart';
@@ -32,13 +33,27 @@ class EstablishmentTypesHelper {
       )''');
     await db.execute('''CREATE TABLE establecimientos (
       id INTEGER PRIMARY KEY,
-      EST_nombre TEXT,
+      TES_id INTEGER,
       TES_tipo TEXT,
+      EST_nombre TEXT,
       EST_id INTEGER,
       EST_direccion TEXT,
       EST_departamento TEXT,
       EST_provincia TEXT,
       EST_municipio TEXT)''');
+  }
+
+
+  //Busca los establecimientos por el tipo EST_id seleccionado en la pantalla de inicio
+  Future<List<EstablishmentsModel>> getEstablishmentById(int tesId) async {
+    Database? db = await database;
+
+    List<Map<String, dynamic>> q = await db!.query('establecimientos',
+        where: 'TES_id = ?', whereArgs: [tesId]);
+
+    return List.generate(q.length, (i) {
+      return EstablishmentsModel.fromMap(q[i]);
+    });
   }
 
   Future<void> loadFromApiAndSave() async {
@@ -76,7 +91,7 @@ class EstablishmentTypesHelper {
       for (var ests in establishments) {
         await insertDataEstablishments(ests);
       }
-      
+
       print('Datos insertados');
     } else {
       throw Exception('Error al cargar datos desde la API');
@@ -113,15 +128,19 @@ class EstablishmentTypesHelper {
     print('Datos eliminados');
   }
 
-  Future<void> queryx() async {
-    String databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, '*.db');
-    // Cerrar cualquier conexión existente
-    // ...
+  
 
-    // Eliminar el archivo de la base de datos
-    print('DB eliminada');
-    await File(path).delete();
+
+  Future<List<EstablishmentsModel>> queryx(String  tesTipo) async {
+    Database? db = await database;
+
+    List<Map<String, dynamic>> q = await db!.query('establecimientos',
+        where: 'TES_tipo = ?', whereArgs: [tesTipo]);
+
+    // print(q);
+    return List.generate(q.length, (i) {
+      return EstablishmentsModel.fromMap(q[i]);
+    });
   }
 
   Future<void> listDatabases() async {

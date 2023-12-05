@@ -9,10 +9,10 @@ class EstablishmentsProvider with ChangeNotifier {
 
   List<EstablishmentsModel> get types => _types;
 
-  Future<void> loadTypes() async {
-    isLoading = true;
-    _types = await _databaseEstablishmentsHelper.getEstablishments();
-    isLoading = false;
-    notifyListeners();
-  }
+  // Future<void> loadEstablishments() async {
+  //   isLoading = true;
+  //   _types = await _databaseEstablishmentsHelper.getEstablishments();
+  //   isLoading = false;
+  //   notifyListeners();
+  // }
 }
