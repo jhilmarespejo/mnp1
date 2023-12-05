@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:mnp1/config/models/establishment_types_model.dart';
 import 'package:mnp1/config/models/establishments_model.dart';
 import 'package:path/path.dart';
@@ -43,13 +43,25 @@ class EstablishmentTypesHelper {
       EST_municipio TEXT)''');
   }
 
-
   //Busca los establecimientos por el tipo EST_id seleccionado en la pantalla de inicio
   Future<List<EstablishmentsModel>> getEstablishmentById(int tesId) async {
     Database? db = await database;
 
     List<Map<String, dynamic>> q = await db!.query('establecimientos',
         where: 'TES_id = ?', whereArgs: [tesId]);
+
+    return List.generate(q.length, (i) {
+      return EstablishmentsModel.fromMap(q[i]);
+    });
+  }
+
+  //Busca los establecimientos por el tipo EST_id seleccionado en la pantalla de inicio
+  Future<List<EstablishmentsModel>> getEstablishmentByName( String name, int tesId ) async {
+    Database? db = await database;
+
+    List<Map<String, dynamic>> q = await db!.query('establecimientos',
+    where: 'TES_id = ? AND EST_nombre LIKE ?',
+    whereArgs: [tesId, '%$name%']);
 
     return List.generate(q.length, (i) {
       return EstablishmentsModel.fromMap(q[i]);

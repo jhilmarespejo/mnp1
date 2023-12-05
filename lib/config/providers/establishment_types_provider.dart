@@ -26,4 +26,11 @@ class EstablishmentTypesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> filterEstablishments( name, tesId) async {
+    isLoading = true;
+    _estabs = await _databaseHelper.getEstablishmentByName( name, tesId );
+    isLoading = false;
+    notifyListeners();
+  }
+
 }
