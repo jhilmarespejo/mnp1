@@ -1,8 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/models/establishment_types_model.dart';
-// import 'package:mnp1/config/models/establishments_model.dart';
-// import 'package:mnp1/config/app_theme.dart';
 import 'package:mnp1/config/providers/establishment_types_provider.dart';
 import 'package:mnp1/screens/list_establishments_screen.dart';
 import 'package:provider/provider.dart';

@@ -1,7 +1,5 @@
 import 'dart:convert';
-// import 'package:flutter/material.dart';
-import 'package:mnp1/config/models/establishment_types_model.dart';
-import 'package:mnp1/config/models/establishments_model.dart';
+import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -41,14 +39,36 @@ class EstablishmentTypesHelper {
       EST_departamento TEXT,
       EST_provincia TEXT,
       EST_municipio TEXT)''');
+    await db.execute('''CREATE TABLE visitas (
+      id INTEGER PRIMARY KEY,
+      EST_id INTEGER,
+      VIS_id INTEGER,
+      VIS_tipo TEXT,
+      VIS_titulo TEXT,
+      EST_nombre TEXT,
+      VIS_numero TEXT,
+      VIS_fechas TEXT)''');
+  }
+
+  //Busca las visitas relacionadas con el establecimiento seleccionado
+  Future<List<EstablishmentVisitsModel>> getVisitByEstablishment(
+      int estId) async {
+    Database? db = await database;
+
+    List<Map<String, dynamic>> vis =
+        await db!.query('visitas', where: 'EST_id = ?', whereArgs: [estId]);
+
+    return List.generate(vis.length, (i) {
+      return EstablishmentVisitsModel.fromMap(vis[i]);
+    });
   }
 
   //Busca los establecimientos por el tipo EST_id seleccionado en la pantalla de inicio
   Future<List<EstablishmentsModel>> getEstablishmentById(int tesId) async {
     Database? db = await database;
 
-    List<Map<String, dynamic>> q = await db!.query('establecimientos',
-        where: 'TES_id = ?', whereArgs: [tesId]);
+    List<Map<String, dynamic>> q = await db!
+        .query('establecimientos', where: 'TES_id = ?', whereArgs: [tesId]);
 
     return List.generate(q.length, (i) {
       return EstablishmentsModel.fromMap(q[i]);
@@ -56,12 +76,13 @@ class EstablishmentTypesHelper {
   }
 
   //Busca los establecimientos por el tipo EST_id seleccionado en la pantalla de inicio
-  Future<List<EstablishmentsModel>> getEstablishmentByName( String name, int tesId ) async {
+  Future<List<EstablishmentsModel>> getEstablishmentByName(
+      String name, int tesId) async {
     Database? db = await database;
 
     List<Map<String, dynamic>> q = await db!.query('establecimientos',
-    where: 'TES_id = ? AND EST_nombre LIKE ?',
-    whereArgs: [tesId, '%$name%']);
+        where: 'TES_id = ? AND EST_nombre LIKE ?',
+        whereArgs: [tesId, '%$name%']);
 
     return List.generate(q.length, (i) {
       return EstablishmentsModel.fromMap(q[i]);
@@ -79,29 +100,41 @@ class EstablishmentTypesHelper {
           'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
     );
 
+    final responseEstablishmentVisits = await get(
+      Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_historial_visitas'),
+    );
+
     if (response.statusCode == 200 &&
-        responseEstablishments.statusCode == 200) {
+        responseEstablishments.statusCode == 200 &&
+        responseEstablishmentVisits.statusCode == 200) {
+      /* Guarda datos de los tipos de establecimientos */
       List<dynamic> apiData = json.decode(response.body);
       List<EstablishmentTypesModel> tiposEstabs =
           apiData.map((data) => EstablishmentTypesModel.fromMap(data)).toList();
-
-      // Guardar los datos en la base de datos
+      // insertar los datos en la BD
       for (var tipoEst in tiposEstabs) {
         await insertData(tipoEst);
       }
 
-      // Añadir un retraso de 3 segundos
-      // await Future.delayed(const Duration(seconds: 5));
-
+      /* Guarda datos de los establecimientos */
       List<dynamic> apiDataEstablishments =
           json.decode(responseEstablishments.body);
       List<EstablishmentsModel> establishments = apiDataEstablishments
           .map((data) => EstablishmentsModel.fromMap(data))
           .toList();
-
-      // Guardar los datos en la base de datos
+      // insertar los datos en la BD
       for (var ests in establishments) {
         await insertDataEstablishments(ests);
+      }
+      /* Guarda el historial de visitas */
+      List<dynamic> apiDataVisits =
+          json.decode(responseEstablishmentVisits.body);
+      List<EstablishmentVisitsModel> visitList = apiDataVisits
+          .map((data) => EstablishmentVisitsModel.fromMap(data))
+          .toList();
+      // insertar los datos en la BD
+      for (var visits in visitList) {
+        await insertDataEstablishmentVisits(visits);
       }
 
       print('Datos insertados');
@@ -120,12 +153,21 @@ class EstablishmentTypesHelper {
     return await dbEst!.insert('establecimientos', ests.toMap());
   }
 
+  Future<int> insertDataEstablishmentVisits(
+      EstablishmentVisitsModel visits) async {
+    Database? dbEst = await database;
+    return await dbEst!.insert('visitas', visits.toMap());
+  }
+
   Future<List<EstablishmentTypesModel>> getData() async {
     Database? db = await database;
     List<Map<String, dynamic>> maps = await db!.query('tipo_establecimientos');
 
     List<Map<String, dynamic>> estabs = await db.query('establecimientos');
 
+    List<Map<String, dynamic>> visits = await db.query('visitas');
+
+    print(visits);
     print(maps);
     print(estabs);
     return List.generate(maps.length, (i) {
@@ -140,36 +182,15 @@ class EstablishmentTypesHelper {
     print('Datos eliminados');
   }
 
-  
-
-
-  Future<List<EstablishmentsModel>> queryx(String  tesTipo) async {
+  Future<List<EstablishmentsModel>> queryx(String tesTipo) async {
     Database? db = await database;
 
-    List<Map<String, dynamic>> q = await db!.query('establecimientos',
-        where: 'TES_tipo = ?', whereArgs: [tesTipo]);
+    List<Map<String, dynamic>> q = await db!
+        .query('establecimientos', where: 'TES_tipo = ?', whereArgs: [tesTipo]);
 
     // print(q);
     return List.generate(q.length, (i) {
       return EstablishmentsModel.fromMap(q[i]);
     });
-  }
-
-  Future<void> listDatabases() async {
-    // Obtener el directorio de las bases de datos
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String databasesPath = documentsDirectory.path;
-
-    // Listar archivos en el directorio de bases de datos
-    List<FileSystemEntity> databaseFiles = Directory(databasesPath).listSync();
-
-    // Filtrar solo los archivos de base de datos
-    List<String> databaseNames = [];
-    for (FileSystemEntity file in databaseFiles) {
-      if (file is File && file.path.endsWith('.db')) {
-        databaseNames.add(file.path);
-      }
-    }
-    print(databaseNames);
   }
 }

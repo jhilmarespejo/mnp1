@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mnp1/config/helpers/establishment_types_helper.dart';
-import 'package:mnp1/config/models/establishment_types_model.dart';
-import 'package:mnp1/config/models/establishments_model.dart';
+import 'package:mnp1/config/files.dart';
 
 class EstablishmentTypesProvider with ChangeNotifier {
   bool isLoading = false;
-  List<EstablishmentTypesModel> _types = [];
   final EstablishmentTypesHelper _databaseHelper = EstablishmentTypesHelper();
+
+  List<EstablishmentTypesModel> _types = [];
   List<EstablishmentTypesModel> get types => _types;
 
   List<EstablishmentsModel> _estabs = [];
   List<EstablishmentsModel> get estabs => _estabs;
+
+  List<EstablishmentVisitsModel> _visits = [];
+  List<EstablishmentVisitsModel> get visits => _visits;
 
   Future<void> loadTypes() async {
     isLoading = true;
@@ -25,10 +27,18 @@ class EstablishmentTypesProvider with ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
-
+// Provider que apunta a la funcion getEstablishmentByName( name, tesId ) establisment_types_helper
   Future<void> filterEstablishments( name, tesId) async {
     isLoading = true;
     _estabs = await _databaseHelper.getEstablishmentByName( name, tesId );
+    isLoading = false;
+    notifyListeners();
+  }
+
+
+  Future<void> loadVisits( int estId ) async {
+    isLoading = true;
+    _visits = await _databaseHelper.getVisitByEstablishment( estId );
     isLoading = false;
     notifyListeners();
   }

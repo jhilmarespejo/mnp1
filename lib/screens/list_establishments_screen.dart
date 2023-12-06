@@ -74,7 +74,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
                                   margin: const EdgeInsets.only(bottom: 4),
                                   child: OutlinedButton.icon(
                                     onPressed: () {
-                                      // _navigateEstablecimientos(context, type);
+                                      _navigateVisits(context, establishment);
                                     },
                                     icon: const Icon(
                                         Icons.arrow_forward_ios_outlined),
@@ -109,5 +109,16 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
         ],
       ),
     );
+  }
+
+  void _navigateVisits(
+      BuildContext context, EstablishmentsModel establishment) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              EstablishmentVisitsScreen(establishment: establishment)),
+    );
+    // setState(() {});
   }
 }
