@@ -25,7 +25,6 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
   void initState() {
     super.initState();
     tesTipoController.text = widget.type.tesTipo;
-    // nameController.text = widget.type.name;
     tesIdlController = widget.type.tesId;
     estabsProvider.loadEstablishments(tesIdlController);
   }
@@ -35,6 +34,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(tesTipoController.text),
+        elevation: 10,
       ),
       body: Column(
         children: [
@@ -64,38 +64,52 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
                       : Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(18.0),
-                            child: ListView.builder(
+                            child: ListView.separated(
+                              separatorBuilder: (context, index) => Divider(
+                                  height: 1,
+                                  color: Theme.of(context).dividerColor),
                               itemCount: estabsProvider.estabs.length,
                               itemBuilder: (context, index) {
                                 final establishment =
                                     estabsProvider.estabs[index];
 
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 4),
-                                  child: OutlinedButton.icon(
-                                    onPressed: () {
-                                      _navigateVisits(context, establishment);
-                                    },
-                                    icon: const Icon(
-                                        Icons.arrow_forward_ios_outlined),
-                                    label: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
+                                return InkWell(
+                                  onTap: () {
+                                    _navigateVisits(context, establishment);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    color: Theme.of(context).cardColor,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          establishment.estNombre ?? '',
-                                          style: const TextStyle(
-                                            fontSize: 18,
+                                        // Icon(Icons.account_circle, color: Theme.of(context).iconTheme.color),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                establishment.estNombre ?? '',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium,
+                                              ),
+                                              Text(
+                                                establishment.estDepartamento ??
+                                                    '',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall,
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Text(
-                                          establishment.estDepartamento ?? '',
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Color.fromARGB(
-                                                255, 101, 100, 100),
-                                          ),
-                                        ),
+                                        Icon(Icons.arrow_forward_ios_outlined,
+                                            color: Theme.of(context)
+                                                .iconTheme
+                                                .color),
                                       ],
                                     ),
                                   ),

@@ -179,6 +179,7 @@ class EstablishmentTypesHelper {
     Database? db = await database;
     await db!.execute('delete from tipo_establecimientos');
     await db!.execute('delete from establecimientos');
+    await db!.execute('delete from visitas');
     print('Datos eliminados');
   }
 
