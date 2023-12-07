@@ -41,13 +41,16 @@ class EstablishmentTypesHelper {
       EST_municipio TEXT)''');
     await db.execute('''CREATE TABLE visitas (
       id INTEGER PRIMARY KEY,
-      EST_id INTEGER,
+      FRM_id INTEGER,
       VIS_id INTEGER,
-      VIS_tipo TEXT,
+      EST_id INTEGER,
+      FRM_titulo TEXT,
+      FRM_fecha TEXT,
       VIS_titulo TEXT,
-      EST_nombre TEXT,
+      VIS_fechas TEXT,
       VIS_numero TEXT,
-      VIS_fechas TEXT)''');
+      VIS_tipo TEXT,
+      EST_nombre TEXT )''');
   }
 
   //Busca las visitas relacionadas con el establecimiento seleccionado

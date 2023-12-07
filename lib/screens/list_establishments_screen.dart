@@ -19,14 +19,14 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
 
   final TextEditingController tesTipoController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
-  late int tesIdlController;
+  late int tesIdController;
 
   @override
   void initState() {
     super.initState();
     tesTipoController.text = widget.type.tesTipo;
-    tesIdlController = widget.type.tesId;
-    estabsProvider.loadEstablishments(tesIdlController);
+    tesIdController = widget.type.tesId;
+    estabsProvider.loadEstablishments(tesIdController);
   }
 
   @override
@@ -43,7 +43,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
             child: TextField(
               controller: nameController,
               onChanged: (value) {
-                estabsProvider.filterEstablishments(value, tesIdlController);
+                estabsProvider.filterEstablishments(value, tesIdController);
               },
               decoration: const InputDecoration(
                 hintText: 'Buscar...',

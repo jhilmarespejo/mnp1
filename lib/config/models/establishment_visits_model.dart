@@ -1,49 +1,62 @@
 class EstablishmentVisitsModel {
   final int? id;
-  final int estId;
+  final int frimId;
   final int visId;
-  final String visTipo;
+  final int estId;
+  final String? frmTitulo;
+  final String? frmFecha;
   final String? visTitulo;
-  final String estNombre;
+  final String? visFechas;
   final String visNumero;
-  final String visFechas;
+  final String visTipo;
+  final String estNombre;
 
   // UserModel({this.id, required this.name, required this.email, required this.desc});
   // CONSTRUCTOR
   EstablishmentVisitsModel({
-  this.id,
-  required this.estId,
-  required this.visId,
-  required this.visTipo,
-  this.visTitulo,
-  required this.estNombre,
-  required this.visNumero,
-  required this.visFechas,
+    this.id,
+    required this.frimId,
+    required this.visId,
+    required this.estId,
+    this.frmTitulo,
+    this.frmFecha,
+    this.visTitulo,
+    this.visFechas,
+    required this.visNumero,
+    required this.visTipo,
+    required this.estNombre,
   });
 
   factory EstablishmentVisitsModel.fromMap(Map<String, dynamic> map) {
     return EstablishmentVisitsModel(
       id: map['id'],
-      estId: map["EST_id"],
+      frimId: map["FRM_id"],
       visId: map["VIS_id"],
-      visTipo: map["VIS_tipo"],
+      estId: map["EST_id"],
+      frmTitulo: map["FRM_titulo"],
+      frmFecha: map["FRM_fecha"],
       visTitulo: map["VIS_titulo"],
-      estNombre: map["EST_nombre"],
+      visFechas: map["VIS_fechas"],
       visNumero: map["VIS_numero"],
-      visFechas: map["VIS_fechas"]
+      visTipo: map["VIS_tipo"],
+      estNombre: map["EST_nombre"],
+      
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      "EST_id": estId,
+      "FRM_id": frimId,
       "VIS_id": visId,
-      "VIS_tipo": visTipo,
+      "EST_id": estId,
+      "FRM_titulo": frmTitulo,
+      "FRM_fecha": frmFecha,
       "VIS_titulo": visTitulo,
-      "EST_nombre": estNombre,
-      "VIS_numero": visNumero,
       "VIS_fechas": visFechas,
+      "VIS_numero": visNumero,
+      "VIS_tipo": visTipo,
+      "EST_nombre": estNombre,
     };
   }
 }

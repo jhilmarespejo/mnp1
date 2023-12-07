@@ -80,7 +80,7 @@ class _VisitsWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(visit.visTitulo?? ''),
-                                Text(visit.visFechas),
+                                Text(visit.visFechas?? ''),
                               ],
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios_outlined),
