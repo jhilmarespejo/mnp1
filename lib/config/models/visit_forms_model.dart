@@ -1,4 +1,4 @@
-class EstablishmentVisitsModel {
+class VisitFormsModel {
   final int? id;
   final int frimId;
   final int visId;
@@ -13,7 +13,7 @@ class EstablishmentVisitsModel {
 
   // UserModel({this.id, required this.name, required this.email, required this.desc});
   // CONSTRUCTOR
-  EstablishmentVisitsModel({
+  VisitFormsModel({
     this.id,
     required this.frimId,
     required this.visId,
@@ -27,8 +27,8 @@ class EstablishmentVisitsModel {
     required this.estNombre,
   });
 
-  factory EstablishmentVisitsModel.fromMap(Map<String, dynamic> map) {
-    return EstablishmentVisitsModel(
+  factory VisitFormsModel.fromMap(Map<String, dynamic> map) {
+    return VisitFormsModel(
       id: map['id'],
       frimId: map["FRM_id"],
       visId: map["VIS_id"],

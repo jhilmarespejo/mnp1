@@ -11,8 +11,8 @@ class EstablishmentTypesProvider with ChangeNotifier {
   List<EstablishmentsModel> _estabs = [];
   List<EstablishmentsModel> get estabs => _estabs;
 
-  List<EstablishmentVisitsModel> _visits = [];
-  List<EstablishmentVisitsModel> get visits => _visits;
+  List<VisitFormsModel> _visitsForms = [];
+  List<VisitFormsModel> get visitFroms => _visitsForms;
 
   Future<void> loadTypes() async {
     isLoading = true;
@@ -38,7 +38,7 @@ class EstablishmentTypesProvider with ChangeNotifier {
 
   Future<void> loadVisits( int estId ) async {
     isLoading = true;
-    _visits = await _databaseHelper.getVisitByEstablishment( estId );
+    _visitsForms = await _databaseHelper.getVisitAndForms( estId );
     isLoading = false;
     notifyListeners();
   }
