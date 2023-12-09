@@ -23,7 +23,6 @@ class _UserListScreenState extends State<UserListScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     userProvider.loadUsers();
     super.initState();
   }

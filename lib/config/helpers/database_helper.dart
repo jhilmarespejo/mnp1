@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart';
 // import 'dart:io';
 
-class EstablishmentTypesHelper {
+class DatabaseHelper {
   Database? _database;
 
   Future<Database?> get database async {
@@ -53,7 +53,7 @@ class EstablishmentTypesHelper {
       EST_nombre TEXT )''');
   }
 
-  //Busca las visitas relacionadas con el establecimiento seleccionado
+  //Busca las visitas y formularios relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getVisitAndForms(int estId) async {
     Database? db = await database;
 
@@ -166,8 +166,8 @@ class EstablishmentTypesHelper {
 
     List<Map<String, dynamic>> visits = await db.query('visitas');
 
-    // print(visits);
-    // print(maps);
+    print(visits);
+    print(maps);
     print(estabs);
     return List.generate(maps.length, (i) {
       return EstablishmentTypesModel.fromMap(maps[i]);

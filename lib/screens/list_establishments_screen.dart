@@ -14,7 +14,7 @@ class ListEstablismentsScreen extends StatefulWidget {
 }
 
 class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
-  final estabsProvider = Provider.of<EstablishmentTypesProvider>(
+  final estabsProvider = Provider.of<DatabaseProvider>(
       AppConstants.globalNavKey.currentContext!);
 
   final TextEditingController tesTipoController = TextEditingController();
@@ -50,7 +50,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
               ),
             ),
           ),
-          Consumer<EstablishmentTypesProvider>(
+          Consumer<DatabaseProvider>(
             builder: (context, estabsProvider, _) {
               return estabsProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -131,7 +131,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              EstablishmentVisitsScreen(establishment: establishment)),
+              VisitFormsScreen(establishment: establishment)),
     );
     // setState(() {});
   }

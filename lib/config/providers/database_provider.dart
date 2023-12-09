@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
 
-class EstablishmentTypesProvider with ChangeNotifier {
+class DatabaseProvider with ChangeNotifier {
   bool isLoading = false;
-  final EstablishmentTypesHelper _databaseHelper = EstablishmentTypesHelper();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
   List<EstablishmentTypesModel> _types = [];
   List<EstablishmentTypesModel> get types => _types;

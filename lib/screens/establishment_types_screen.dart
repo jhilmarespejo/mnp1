@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/models/establishment_types_model.dart';
-import 'package:mnp1/config/providers/establishment_types_provider.dart';
+import 'package:mnp1/config/providers/database_provider.dart';
 import 'package:mnp1/screens/list_establishments_screen.dart';
 import 'package:provider/provider.dart';
 import '/app_constants.dart';
@@ -13,7 +13,7 @@ class EstablishmentTypesScreen extends StatefulWidget {
 }
 
 class _EstablishmentsScreenState extends State<EstablishmentTypesScreen> {
-  final typeEstablishments = Provider.of<EstablishmentTypesProvider>(
+  final typeEstablishments = Provider.of<DatabaseProvider>(
       AppConstants.globalNavKey.currentContext!);
 
   @override
@@ -36,13 +36,11 @@ class _EstablishmentsScreenState extends State<EstablishmentTypesScreen> {
 }
 
 class _EstablishmentsWidget extends StatelessWidget {
-  const _EstablishmentsWidget({
-    super.key,
-  });
+  const _EstablishmentsWidget();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<EstablishmentTypesProvider>(
+    return Consumer<DatabaseProvider>(
       builder: (context, typeEstablishments, _) {
         return typeEstablishments.isLoading
             ? const Center(child: CircularProgressIndicator())

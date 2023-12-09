@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/app_theme.dart';
-import 'package:mnp1/config/providers/establishment_types_provider.dart';
+import 'package:mnp1/config/providers/database_provider.dart';
 import 'package:mnp1/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) => EstablishmentTypesProvider()),
+            create: (context) => DatabaseProvider()),
         // Agrega más providers según sea necesario
         // ChangeNotifierProvider(create: (context) => EstablishmentsProvider()),
       ],

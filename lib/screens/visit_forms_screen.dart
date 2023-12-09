@@ -3,18 +3,18 @@ import 'package:mnp1/config/files.dart';
 import 'package:provider/provider.dart';
 import '../app_constants.dart';
 
-class EstablishmentVisitsScreen extends StatefulWidget {
+class VisitFormsScreen extends StatefulWidget {
   final EstablishmentsModel establishment;
 
-  const EstablishmentVisitsScreen({super.key, required this.establishment});
+  const VisitFormsScreen({super.key, required this.establishment});
 
   @override
-  State<EstablishmentVisitsScreen> createState() =>
-      _EstablishmentVisitsScreenState();
+  State<VisitFormsScreen> createState() =>
+      _VisitFormsScreenState();
 }
 
-class _EstablishmentVisitsScreenState extends State<EstablishmentVisitsScreen> {
-  final visitsProvider = Provider.of<EstablishmentTypesProvider>(
+class _VisitFormsScreenState extends State<VisitFormsScreen> {
+  final visitsProvider = Provider.of<DatabaseProvider>(
       AppConstants.globalNavKey.currentContext!);
 
   final TextEditingController establishmentNameController = TextEditingController();
@@ -58,7 +58,7 @@ class _VisitsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<EstablishmentTypesProvider>(
+    return Consumer<DatabaseProvider>(
       builder: (context, visitsProvider, _) {
         return visitsProvider.isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -81,6 +81,7 @@ class _VisitsWidget extends StatelessWidget {
                               children: [
                                 Text(visit.visTitulo?? ''),
                                 Text(visit.visFechas?? ''),
+                                Text(visit.frmTitulo?? ''),
                               ],
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios_outlined),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
 
 class SyncScreen extends StatelessWidget {
-  SyncScreen({super.key});
+  const SyncScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,13 +10,13 @@ class SyncScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Sincronización de datos'),
       ),
-      body: _ButtonsView(),
+      body: const _ButtonsView(),
     );
   }
 }
 
 class _ButtonsView extends StatefulWidget {
-  _ButtonsView();
+  const _ButtonsView();
 
   @override
   State<_ButtonsView> createState() => _ButtonsViewState();
@@ -25,8 +25,8 @@ class _ButtonsView extends StatefulWidget {
 class _ButtonsViewState extends State<_ButtonsView> {
   bool isLoading = false;
 
-  final tipoEst = EstablishmentTypesHelper();
-  final establecimientos = EstablishmentsHelper();
+  final tipoEst = DatabaseHelper();
+  // final establecimientos = EstablishmentsHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -35,49 +35,6 @@ class _ButtonsViewState extends State<_ButtonsView> {
     return SizedBox(
       width: double.infinity,
       child: Column(
-        // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-        // children: [
-        //   isLoading
-        //       ? const CircularProgressIndicator()
-        //       : FilledButton.icon(
-        //           icon: const Icon(Icons.cloud_sync_outlined),
-        //           label: const Text('Sincronizar datos'),
-        //           onPressed: () {
-        //             _loaddata();
-        //           },
-        //         ),
-        //   FilledButton.icon(
-        //     icon: const Icon(Icons.get_app_sharp),
-        //     label: const Text('Consultar datos'),
-        //     onPressed: () {
-        //       _getdata();
-        //     },
-        //   ),
-        //   FilledButton.icon(
-        //     icon: const Icon(Icons.delete),
-        //     label: const Text('Limpiar datos'),
-        //     onPressed: () {
-        //       _deletedata();
-        //     },
-        //   ),
-        //   FilledButton.icon(
-        //     icon: const Icon(Icons.delete),
-        //     label: const Text('Consulta X'),
-        //     onPressed: () {
-        //       _queryX();
-        //     },
-        //   ),
-        //   const SizedBox(
-        //     height: 150,
-        //   ),
-        //   FilledButton.icon(
-        //     icon: const Icon(Icons.get_app_sharp),
-        //     label: const Text('Iniciar'),
-        //     onPressed: () {
-        //       _navigateTipoEstablecimientos(context);
-        //     },
-        //   ),
-        // ],
         children: [
           FilledButton.icon(
             icon: const Icon(Icons.cloud_sync_outlined),
@@ -140,7 +97,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
   }
 
   void _queryX() async {
-    EstablishmentTypesHelper dbHelper = EstablishmentTypesHelper();
+    DatabaseHelper dbHelper = DatabaseHelper();
     String tesTipo = 'Centro Penitenciario';
     List<EstablishmentsModel> resultados = await dbHelper.queryx( tesTipo );
     for (var resultado in resultados) {

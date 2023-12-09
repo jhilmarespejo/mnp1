@@ -17,14 +17,14 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
 
   startTime() async {
-    var _duration = const Duration(seconds: 2);
-    return Timer(_duration, navigationPage);
+    var duration = const Duration(seconds: 2);
+    return Timer(duration, navigationPage);
   }
 
   void navigationPage() {
       Navigator.of(context).push(
       // MaterialPageRoute(builder: (context) => const UserListScreen()));
-      MaterialPageRoute(builder: (context) => SyncScreen()));
+      MaterialPageRoute(builder: (context) => const SyncScreen()));
   }
 
   @override
@@ -36,7 +36,7 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
     animation =
         CurvedAnimation(parent: animationController, curve: Curves.easeOut);
 
-    animation.addListener(() => this.setState(() {}));
+    animation.addListener(() => setState(() {}));
     animationController.forward();
 
     setState(() {
