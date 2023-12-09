@@ -3,6 +3,7 @@ import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+// import 'package:http/http.dart';
 import 'package:http/http.dart';
 // import 'dart:io';
 
@@ -32,14 +33,14 @@ class DatabaseHelper {
     await db.execute('''CREATE TABLE establecimientos (
       id INTEGER PRIMARY KEY,
       TES_id INTEGER,
-      xTES_tipo TEXT,
-      xEST_nombre TEXT,
+      TES_tipo TEXT,
+      EST_nombre TEXT,
       EST_id INTEGER,
       EST_direccion TEXT,
       EST_departamento TEXT,
       EST_provincia TEXT,
       EST_municipio TEXT)''');
-    await db.execute('''CREATE TABLE visitas (
+    await db.execute('''CREATE TABLE visitas_formularios (
       id INTEGER PRIMARY KEY,
       FRM_id INTEGER,
       VIS_id INTEGER,
@@ -58,7 +59,7 @@ class DatabaseHelper {
     Database? db = await database;
 
     List<Map<String, dynamic>> vis =
-        await db!.query('visitas', where: 'EST_id = ?', whereArgs: [estId]);
+        await db!.query('visitas_formularios', where: 'EST_id = ?', whereArgs: [estId]);
 
     return List.generate(vis.length, (i) {
       return VisitFormsModel.fromMap(vis[i]);
@@ -102,8 +103,12 @@ class DatabaseHelper {
           'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
     );
 
+    // final responseVisitForms = await get(
+    //   // Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_historial_visitas_formularios'),
+    //   Uri.parse('http://mnp.local/api/api_visitas_formularios'),
+    // );
     final responseVisitForms = await get(
-      Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_historial_visitas_formularios'),
+      Uri.parse('http://mnp.local/api/api_visitas_formularios'),
     );
 
     if (response.statusCode == 200 &&
@@ -155,7 +160,7 @@ class DatabaseHelper {
 
   Future<int> insertDataEstablishmentVisits( VisitFormsModel visitForms) async {
     Database? dbVisForms = await database;
-    return await dbVisForms!.insert('visitas', visitForms.toMap());
+    return await dbVisForms!.insert('visitas_formularios', visitForms.toMap());
   }
 
   Future<List<EstablishmentTypesModel>> getData() async {
@@ -164,10 +169,10 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> estabs = await db.query('establecimientos');
 
-    List<Map<String, dynamic>> visits = await db.query('visitas');
+    List<Map<String, dynamic>> visits = await db.query('visitas_formularios');
 
-    print(visits);
-    print(maps);
+    // print(visits);
+    // print(maps);
     print(estabs);
     return List.generate(maps.length, (i) {
       return EstablishmentTypesModel.fromMap(maps[i]);
@@ -178,7 +183,7 @@ class DatabaseHelper {
     Database? db = await database;
     await db!.execute('delete from tipo_establecimientos');
     await db.execute('delete from establecimientos');
-    await db.execute('delete from visitas');
+    await db.execute('delete from visitas_formularios');
     print('Datos eliminados');
   }
 

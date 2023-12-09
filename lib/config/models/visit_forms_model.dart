@@ -1,6 +1,6 @@
 class VisitFormsModel {
   final int? id;
-  final int frimId;
+  final int frmId;
   final int visId;
   final int estId;
   final String? frmTitulo;
@@ -15,7 +15,7 @@ class VisitFormsModel {
   // CONSTRUCTOR
   VisitFormsModel({
     this.id,
-    required this.frimId,
+    required this.frmId,
     required this.visId,
     required this.estId,
     this.frmTitulo,
@@ -30,7 +30,7 @@ class VisitFormsModel {
   factory VisitFormsModel.fromMap(Map<String, dynamic> map) {
     return VisitFormsModel(
       id: map['id'],
-      frimId: map["FRM_id"],
+      frmId: map["FRM_id"],
       visId: map["VIS_id"],
       estId: map["EST_id"],
       frmTitulo: map["FRM_titulo"],
@@ -47,7 +47,7 @@ class VisitFormsModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      "FRM_id": frimId,
+      "FRM_id": frmId,
       "VIS_id": visId,
       "EST_id": estId,
       "FRM_titulo": frmTitulo,

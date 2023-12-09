@@ -36,7 +36,7 @@ class DatabaseProvider with ChangeNotifier {
   }
 
 
-  Future<void> loadVisits( int estId ) async {
+  Future<void> loadVisitForms( int estId ) async {
     isLoading = true;
     _visitsForms = await _databaseHelper.getVisitAndForms( estId );
     isLoading = false;

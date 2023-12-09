@@ -25,7 +25,7 @@ class _VisitFormsScreenState extends State<VisitFormsScreen> {
     estIdlController = widget.establishment.estId!;
     establishmentNameController.text = widget.establishment.estNombre!;
     establishmentTipeController.text = widget.establishment.tesTipo!;
-    visitsProvider.loadVisits(estIdlController);
+    visitsProvider.loadVisitForms( estIdlController );
     super.initState();
   }
 
