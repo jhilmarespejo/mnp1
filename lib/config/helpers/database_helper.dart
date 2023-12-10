@@ -103,13 +103,10 @@ class DatabaseHelper {
           'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
     );
 
-    // final responseVisitForms = await get(
-    //   // Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_historial_visitas_formularios'),
-    //   Uri.parse('http://mnp.local/api/api_visitas_formularios'),
-    // );
     final responseVisitForms = await get(
-      Uri.parse('http://mnp.local/api/api_visitas_formularios'),
+      Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
     );
+    
 
     if (response.statusCode == 200 &&
         responseEstablishments.statusCode == 200 &&
