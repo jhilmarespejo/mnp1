@@ -7,9 +7,9 @@ class VisitFormsModel {
   final String? frmFecha;
   final String? visTitulo;
   final String? visFechas;
-  final String visNumero;
+  final String? visNumero;
   final String visTipo;
-  final String estNombre;
+  final String? estNombre;
 
   // UserModel({this.id, required this.name, required this.email, required this.desc});
   // CONSTRUCTOR
@@ -22,9 +22,9 @@ class VisitFormsModel {
     this.frmFecha,
     this.visTitulo,
     this.visFechas,
-    required this.visNumero,
+    this.visNumero,
     required this.visTipo,
-    required this.estNombre,
+    this.estNombre,
   });
 
   factory VisitFormsModel.fromMap(Map<String, dynamic> map) {
@@ -44,6 +44,8 @@ class VisitFormsModel {
     );
   }
 
+  
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -60,3 +62,4 @@ class VisitFormsModel {
     };
   }
 }
+

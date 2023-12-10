@@ -54,12 +54,31 @@ class DatabaseHelper {
       EST_nombre TEXT )''');
   }
 
-  //Busca las visitas y formularios relacionadas con el establecimiento seleccionado
-  Future<List<VisitFormsModel>> getVisitAndForms(int estId) async {
+//Busca las visitas relacionadas con el establecimiento seleccionado
+  Future<List<VisitFormsModel>> getFormsFromVisit(int visId) async {
     Database? db = await database;
+    List<Map<String, dynamic>> vis = await db!.query(
+      'visitas_formularios',
+      // columns: ['FRM_id', 'FRM_titulo', 'FRM_fecha', 'VIS_id'],  // Incluye todas las columnas necesarias en la lista de selección
+      where: 'EST_id = ?',
+      whereArgs: [visId]
+      // groupBy: 'VIS_id',  // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
+    );
 
-    List<Map<String, dynamic>> vis =
-        await db!.query('visitas_formularios', where: 'EST_id = ?', whereArgs: [estId]);
+    return List.generate(vis.length, (i) {
+      return VisitFormsModel.fromMap(vis[i]);
+    });
+  }
+  //Busca las visitas relacionadas con el establecimiento seleccionado
+  Future<List<VisitFormsModel>> getVisits(int estId) async {
+    Database? db = await database;
+    List<Map<String, dynamic>> vis = await db!.query(
+      'visitas_formularios',
+      // columns: ['VIS_tipo', 'VIS_titulo'],  // Incluye todas las columnas necesarias en la lista de selección
+      where: 'EST_id = ?',
+      whereArgs: [estId],
+      groupBy: 'VIS_id',  // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
+    );
 
     return List.generate(vis.length, (i) {
       return VisitFormsModel.fromMap(vis[i]);
@@ -92,6 +111,7 @@ class DatabaseHelper {
     });
   }
 
+  // Busca informacion de las apis y la inserta en la base de datos local
   Future<void> loadFromApiAndSave() async {
     final response = await get(
       Uri.parse(
@@ -145,6 +165,7 @@ class DatabaseHelper {
     }
   }
 
+  // funciones para la insercion de datos
   Future<int> insertData(EstablishmentTypesModel tipoEst) async {
     Database? db = await database;
     return await db!.insert('tipo_establecimientos', tipoEst.toMap());
@@ -159,6 +180,7 @@ class DatabaseHelper {
     Database? dbVisForms = await database;
     return await dbVisForms!.insert('visitas_formularios', visitForms.toMap());
   }
+
 
   Future<List<EstablishmentTypesModel>> getData() async {
     Database? db = await database;

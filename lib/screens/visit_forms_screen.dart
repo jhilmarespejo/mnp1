@@ -62,15 +62,15 @@ class _VisitsWidget extends StatelessWidget {
       builder: (context, visitsProvider, _) {
         return visitsProvider.isLoading
             ? const Center(child: CircularProgressIndicator())
-            : visitsProvider.visitFroms.isEmpty
+            : visitsProvider.visits.isEmpty
                 ? const Center(
                     child: Text('Sin datos!', style: TextStyle(fontSize: 18)))
                 : Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: ListView.builder(
-                      itemCount: visitsProvider.visitFroms.length,
+                      itemCount: visitsProvider.visits.length,
                       itemBuilder: (context, index) {
-                        final visit = visitsProvider.visitFroms[index];
+                        final visit = visitsProvider.visits[index];
                         return Card(
                           elevation: 2,
                           margin: const EdgeInsets.all(3),
