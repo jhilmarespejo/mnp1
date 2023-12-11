@@ -81,7 +81,6 @@ class _VisitsWidget extends StatelessWidget {
                               children: [
                                 Text(visit.visTitulo?? ''),
                                 Text(visit.visFechas?? ''),
-                                Text(visit.frmTitulo?? ''),
                               ],
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios_outlined),

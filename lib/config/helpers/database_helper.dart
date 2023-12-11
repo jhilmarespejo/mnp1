@@ -57,18 +57,13 @@ class DatabaseHelper {
 //Busca las visitas relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getFormsFromVisit(int visId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> vis = await db!.query(
-      'visitas_formularios',
-      // columns: ['FRM_id', 'FRM_titulo', 'FRM_fecha', 'VIS_id'],  // Incluye todas las columnas necesarias en la lista de selección
-      where: 'EST_id = ?',
-      whereArgs: [visId]
-      // groupBy: 'VIS_id',  // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
-    );
-
-    return List.generate(vis.length, (i) {
-      return VisitFormsModel.fromMap(vis[i]);
+    List<Map<String, dynamic>> frm = await db!.query('visitas_formularios', where: 'VIS_id = ?', whereArgs: [visId]);
+    print(frm);
+    return List.generate(frm.length, (i) {
+      return VisitFormsModel.fromMap(frm[i]);
     });
   }
+
   //Busca las visitas relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getVisits(int estId) async {
     Database? db = await database;
@@ -77,7 +72,8 @@ class DatabaseHelper {
       // columns: ['VIS_tipo', 'VIS_titulo'],  // Incluye todas las columnas necesarias en la lista de selección
       where: 'EST_id = ?',
       whereArgs: [estId],
-      groupBy: 'VIS_id',  // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
+      groupBy:
+          'VIS_id', // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
     );
 
     return List.generate(vis.length, (i) {
@@ -124,9 +120,9 @@ class DatabaseHelper {
     );
 
     final responseVisitForms = await get(
-      Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
+      Uri.parse(
+          'https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
     );
-    
 
     if (response.statusCode == 200 &&
         responseEstablishments.statusCode == 200 &&
@@ -141,7 +137,8 @@ class DatabaseHelper {
       }
 
       /* Guarda datos de los establecimientos */
-      List<dynamic> apiDataEstablishments = json.decode(responseEstablishments.body);
+      List<dynamic> apiDataEstablishments =
+          json.decode(responseEstablishments.body);
       List<EstablishmentsModel> establishments = apiDataEstablishments
           .map((data) => EstablishmentsModel.fromMap(data))
           .toList();
@@ -150,10 +147,9 @@ class DatabaseHelper {
         await insertDataEstablishments(ests);
       }
       /* Guarda las visitas y formularios */
-      List<dynamic> apiDataVisits =json.decode(responseVisitForms.body);
-      List<VisitFormsModel> visitFormsList = apiDataVisits
-          .map((data) => VisitFormsModel.fromMap(data))
-          .toList();
+      List<dynamic> apiDataVisits = json.decode(responseVisitForms.body);
+      List<VisitFormsModel> visitFormsList =
+          apiDataVisits.map((data) => VisitFormsModel.fromMap(data)).toList();
       // insertar los datos en la BD
       for (var visitForms in visitFormsList) {
         await insertDataEstablishmentVisits(visitForms);
@@ -176,11 +172,10 @@ class DatabaseHelper {
     return await dbEst!.insert('establecimientos', ests.toMap());
   }
 
-  Future<int> insertDataEstablishmentVisits( VisitFormsModel visitForms) async {
+  Future<int> insertDataEstablishmentVisits(VisitFormsModel visitForms) async {
     Database? dbVisForms = await database;
     return await dbVisForms!.insert('visitas_formularios', visitForms.toMap());
   }
-
 
   Future<List<EstablishmentTypesModel>> getData() async {
     Database? db = await database;
