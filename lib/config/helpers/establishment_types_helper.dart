@@ -3,11 +3,10 @@ import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-// import 'package:http/http.dart';
 import 'package:http/http.dart';
 // import 'dart:io';
 
-class DatabaseHelper {
+class EstablishmentTypesHelper {
   Database? _database;
 
   Future<Database?> get database async {
@@ -40,7 +39,7 @@ class DatabaseHelper {
       EST_departamento TEXT,
       EST_provincia TEXT,
       EST_municipio TEXT)''');
-    await db.execute('''CREATE TABLE visitas_formularios (
+    await db.execute('''CREATE TABLE visitas (
       id INTEGER PRIMARY KEY,
       FRM_id INTEGER,
       VIS_id INTEGER,
@@ -54,34 +53,16 @@ class DatabaseHelper {
       EST_nombre TEXT )''');
   }
 
-//Busca las visitas relacionadas con el establecimiento seleccionado
-  Future<List<VisitFormsModel>> getFormsFromVisit(int visId) async {
-    Database? db = await database;
-    List<Map<String, dynamic>> vis = await db!.query(
-      'visitas_formularios',
-      // columns: ['FRM_id', 'FRM_titulo', 'FRM_fecha', 'VIS_id'],  // Incluye todas las columnas necesarias en la lista de selección
-      where: 'EST_id = ?',
-      whereArgs: [visId]
-      // groupBy: 'VIS_id',  // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
-    );
-
-    return List.generate(vis.length, (i) {
-      return VisitFormsModel.fromMap(vis[i]);
-    });
-  }
   //Busca las visitas relacionadas con el establecimiento seleccionado
-  Future<List<VisitFormsModel>> getVisits(int estId) async {
+  Future<List<EstablishmentsModel>> getVisitByEstablishment(
+      int estId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> vis = await db!.query(
-      'visitas_formularios',
-      // columns: ['VIS_tipo', 'VIS_titulo'],  // Incluye todas las columnas necesarias en la lista de selección
-      where: 'EST_id = ?',
-      whereArgs: [estId],
-      groupBy: 'VIS_id',  // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
-    );
+
+    List<Map<String, dynamic>> vis =
+        await db!.query('visitas', where: 'EST_id = ?', whereArgs: [estId]);
 
     return List.generate(vis.length, (i) {
-      return VisitFormsModel.fromMap(vis[i]);
+      return EstablishmentsModel.fromMap(vis[i]);
     });
   }
 
@@ -111,7 +92,6 @@ class DatabaseHelper {
     });
   }
 
-  // Busca informacion de las apis y la inserta en la base de datos local
   Future<void> loadFromApiAndSave() async {
     final response = await get(
       Uri.parse(
@@ -123,14 +103,13 @@ class DatabaseHelper {
           'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
     );
 
-    final responseVisitForms = await get(
-      Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
+    final responseEstablishmentVisits = await get(
+      Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_historial_visitas'),
     );
-    
 
     if (response.statusCode == 200 &&
         responseEstablishments.statusCode == 200 &&
-        responseVisitForms.statusCode == 200) {
+        responseEstablishmentVisits.statusCode == 200) {
       /* Guarda datos de los tipos de establecimientos */
       List<dynamic> apiData = json.decode(response.body);
       List<EstablishmentTypesModel> tiposEstabs =
@@ -141,7 +120,8 @@ class DatabaseHelper {
       }
 
       /* Guarda datos de los establecimientos */
-      List<dynamic> apiDataEstablishments = json.decode(responseEstablishments.body);
+      List<dynamic> apiDataEstablishments =
+          json.decode(responseEstablishments.body);
       List<EstablishmentsModel> establishments = apiDataEstablishments
           .map((data) => EstablishmentsModel.fromMap(data))
           .toList();
@@ -149,14 +129,15 @@ class DatabaseHelper {
       for (var ests in establishments) {
         await insertDataEstablishments(ests);
       }
-      /* Guarda las visitas y formularios */
-      List<dynamic> apiDataVisits =json.decode(responseVisitForms.body);
-      List<VisitFormsModel> visitFormsList = apiDataVisits
-          .map((data) => VisitFormsModel.fromMap(data))
+      /* Guarda el historial de visitas */
+      List<dynamic> apiDataVisits =
+          json.decode(responseEstablishmentVisits.body);
+      List<EstablishmentsModel> visitList = apiDataVisits
+          .map((data) => EstablishmentsModel.fromMap(data))
           .toList();
       // insertar los datos en la BD
-      for (var visitForms in visitFormsList) {
-        await insertDataEstablishmentVisits(visitForms);
+      for (var visits in visitList) {
+        await insertDataEstablishmentVisits(visits);
       }
 
       print('Datos insertados');
@@ -165,7 +146,6 @@ class DatabaseHelper {
     }
   }
 
-  // funciones para la insercion de datos
   Future<int> insertData(EstablishmentTypesModel tipoEst) async {
     Database? db = await database;
     return await db!.insert('tipo_establecimientos', tipoEst.toMap());
@@ -176,11 +156,11 @@ class DatabaseHelper {
     return await dbEst!.insert('establecimientos', ests.toMap());
   }
 
-  Future<int> insertDataEstablishmentVisits( VisitFormsModel visitForms) async {
-    Database? dbVisForms = await database;
-    return await dbVisForms!.insert('visitas_formularios', visitForms.toMap());
+  Future<int> insertDataEstablishmentVisits(
+      EstablishmentsModel visits) async {
+    Database? dbEst = await database;
+    return await dbEst!.insert('visitas', visits.toMap());
   }
-
 
   Future<List<EstablishmentTypesModel>> getData() async {
     Database? db = await database;
@@ -188,7 +168,7 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> estabs = await db.query('establecimientos');
 
-    List<Map<String, dynamic>> visits = await db.query('visitas_formularios');
+    List<Map<String, dynamic>> visits = await db.query('visitas');
 
     print(visits);
     print(maps);
@@ -202,7 +182,7 @@ class DatabaseHelper {
     Database? db = await database;
     await db!.execute('delete from tipo_establecimientos');
     await db.execute('delete from establecimientos');
-    await db.execute('delete from visitas_formularios');
+    await db.execute('delete from visitas');
     print('Datos eliminados');
   }
 
