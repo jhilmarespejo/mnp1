@@ -58,7 +58,7 @@ class DatabaseHelper {
   Future<List<VisitFormsModel>> getFormsFromVisit(int visId) async {
     Database? db = await database;
     List<Map<String, dynamic>> frm = await db!.query('visitas_formularios', where: 'VIS_id = ?', whereArgs: [visId]);
-    print(frm);
+    // print(frm);
     return List.generate(frm.length, (i) {
       return VisitFormsModel.fromMap(frm[i]);
     });
