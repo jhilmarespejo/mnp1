@@ -79,14 +79,51 @@ class _VisitsWidget extends StatelessWidget {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(visit.visTitulo?? ''),
-                                Text(visit.visFechas?? ''),
+                                Text(visit.visTitulo ?? ''),
+                                Text(visit.visFechas ?? ''),
                               ],
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios_outlined),
-                            // onTap: () {
-                            //   // _navigateEstablecimientos(context, type );
-                            // },
+                            onTap: () async {
+                              // Cargar los formularios asociados a esta visita
+                              await visitsProvider.loadFormsFromVisit(visit.visId);
+                              // Mostrar los formularios en un diálogo o nueva pantalla
+                              // ignore: use_build_context_synchronously
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Formularios de la visita ${visit.visId}'),
+                                    content: visitsProvider.forms.isEmpty
+                                        ? const Text('Esta visita no tiene formularios asociados.')
+                                        : ListView.builder(
+                                            itemCount: visitsProvider.forms.length,
+                                            itemBuilder: (context, index) {
+                                              final form = visitsProvider.forms[index];
+                                              return ListTile(
+                                                title: Text(form.frmTitulo ?? ''),
+                                                subtitle: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(form.frmFecha ?? ''),
+                                                    // Agrega aquí otros campos del formulario si es necesario
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Cerrar'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                         );
                       },
