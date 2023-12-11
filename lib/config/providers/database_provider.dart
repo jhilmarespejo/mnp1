@@ -45,19 +45,13 @@ class DatabaseProvider with ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
-  // Future<void> loadFormsFromVisit( int visId ) async {
-  //   isLoading = true;
-  //   _forms = await _databaseHelper.getFormsFromVisit( visId );
-  //   isLoading = false;
-  //   notifyListeners();
-  // }
 
   Future<List<VisitFormsModel>> loadFormsFromVisit(int visId) async {
-    isLoading = true;
-    _forms = await _databaseHelper.getFormsFromVisit( visId );
-    isLoading = false;
-    notifyListeners();
-  return _forms; // Asegúrate de devolver una lista de VisitFormsModel
-}
+      isLoading = true;
+      _forms = await _databaseHelper.getFormsFromVisit( visId );
+      isLoading = false;
+      notifyListeners();
+    return _forms; // Asegúrate de devolver una lista de VisitFormsModel
+  }
 
 }

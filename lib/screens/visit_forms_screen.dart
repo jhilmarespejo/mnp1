@@ -84,9 +84,9 @@ class _VisitsWidget extends StatelessWidget {
                               ],
                             ),
                             trailing: const Icon(Icons.arrow_forward_ios_outlined),
-                            onTap: () {
-                              // _navigateEstablecimientos(context, type );
-                            },
+                            // onTap: () {
+                            //   // _navigateEstablecimientos(context, type );
+                            // },
                           ),
                         );
                       },

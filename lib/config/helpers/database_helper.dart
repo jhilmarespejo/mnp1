@@ -67,14 +67,7 @@ class DatabaseHelper {
   //Busca las visitas relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getVisits(int estId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> vis = await db!.query(
-      'visitas_formularios',
-      // columns: ['VIS_tipo', 'VIS_titulo'],  // Incluye todas las columnas necesarias en la lista de selección
-      where: 'EST_id = ?',
-      whereArgs: [estId],
-      groupBy:
-          'VIS_id', // Ajusta según tus necesidades, asegúrate de incluir todas las columnas necesarias
-    );
+    List<Map<String, dynamic>> vis = await db!.query('visitas_formularios',where: 'EST_id = ?',whereArgs: [estId], groupBy: 'VIS_id', );
 
     return List.generate(vis.length, (i) {
       return VisitFormsModel.fromMap(vis[i]);
