@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
+import 'package:mnp1/screens/questionnarie_screen.dart';
 import 'package:provider/provider.dart';
 import '../app_constants.dart';
 
@@ -106,32 +107,35 @@ class _VisitsWidget extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment:CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Formularios asociados:',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16,
-                                              color: Theme.of(context).primaryColor,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
                                             ),
                                           ),
-                                          for (final form
-                                              in visitsProvider.forms)
-                                            ListTile(
-                                              title: Text(
-                                                form.frmTitulo ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 15),
-                                              ),
-                                              subtitle: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(form.frmFecha ?? ''),
-                                                  // Otros campos del formulario si es necesario
-                                                ],
+                                          for (final form in visitsProvider.forms)
+                                            InkWell(
+                                              onTap: () {
+                                                _navigateForm(context, form);
+                                              },
+                                              child: ListTile(
+                                                title: Text(
+                                                  form.frmTitulo,
+                                                  style: const TextStyle( fontSize: 15),
+                                                ),
+                                                subtitle: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(form.frmFecha ?? ''),
+                                                    // Otros campos del formulario si es necesario
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                         ],
@@ -147,5 +151,12 @@ class _VisitsWidget extends StatelessWidget {
                   );
       },
     );
+  }
+   void _navigateForm( BuildContext context, VisitFormsModel form) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute( builder: (context) => QuestionnarieScreen(form: form)),
+    );
+    // setState(() {});
   }
 }

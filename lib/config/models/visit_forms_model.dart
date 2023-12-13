@@ -3,7 +3,7 @@ class VisitFormsModel {
   final int frmId;
   final int visId;
   final int estId;
-  final String? frmTitulo;
+  final String frmTitulo;
   final String? frmFecha;
   final String? visTitulo;
   final String? visFechas;
@@ -18,7 +18,7 @@ class VisitFormsModel {
     required this.frmId,
     required this.visId,
     required this.estId,
-    this.frmTitulo,
+    required this.frmTitulo,
     this.frmFecha,
     this.visTitulo,
     this.visFechas,

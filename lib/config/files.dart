@@ -1,4 +1,8 @@
+
+export 'package:mnp1/config/models/questionnarie_model.dart';
+
 export 'package:mnp1/screens/visit_forms_screen.dart';
+
 
 export 'package:mnp1/screens/establishment_types_screen.dart';
 

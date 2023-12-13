@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-// import 'package:http/http.dart';
 import 'package:http/http.dart';
-// import 'dart:io';
 
 class DatabaseHelper {
   Database? _database;
@@ -52,12 +49,42 @@ class DatabaseHelper {
       VIS_numero TEXT,
       VIS_tipo TEXT,
       EST_nombre TEXT )''');
+    await db.execute('''CREATE TABLE cuestionario (
+      id INTEGER PRIMARY KEY,
+      RBF_id INTEGER,
+      FK_FRM_id INTEGER,
+      FK_BCP_id INTEGER,
+      BCP_id INTEGER,
+      RBF_orden INTEGER,
+      RBF_estado INTEGER,
+      CAT_id INTEGER,
+      CAT_subcat_id INTEGER,
+      BCP_pregunta TEXT,
+      BCP_tipoRespuesta TEXT,
+      BCP_opciones TEXT,
+      BCP_complemento TEXT,
+      CAT_subcategoria TEXT,
+      CAT_categoria TEXT,
+      FRM_titulo TEXT
+    )''');
   }
+
+  //Busca las preguntas relacionadas formularios seleccionado
+  Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
+    Database? db = await database;
+    List<Map<String, dynamic>> questions = await db!.query('cuestionario', where: 'FK_FRM_id = ?', whereArgs: [frmId],
+  orderBy: 'RBF_id, RBF_orden');
+    return List.generate(questions.length, (i) {
+      return QuestionnarieModel.fromMap(questions[i]);
+    });
+  }
+
 
 //Busca las visitas relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getFormsFromVisit(int visId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> frm = await db!.query('visitas_formularios', where: 'VIS_id = ?', whereArgs: [visId]);
+    List<Map<String, dynamic>> frm = await db!
+        .query('visitas_formularios', where: 'VIS_id = ?', whereArgs: [visId]);
     // print(frm);
     return List.generate(frm.length, (i) {
       return VisitFormsModel.fromMap(frm[i]);
@@ -67,7 +94,12 @@ class DatabaseHelper {
   //Busca las visitas relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getVisits(int estId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> vis = await db!.query('visitas_formularios',where: 'EST_id = ?',whereArgs: [estId], groupBy: 'VIS_id', );
+    List<Map<String, dynamic>> vis = await db!.query(
+      'visitas_formularios',
+      where: 'EST_id = ?',
+      whereArgs: [estId],
+      groupBy: 'VIS_id',
+    );
 
     return List.generate(vis.length, (i) {
       return VisitFormsModel.fromMap(vis[i]);
@@ -116,10 +148,15 @@ class DatabaseHelper {
       Uri.parse(
           'https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
     );
+    final responseForm = await get(
+      Uri.parse(
+          'https://test-mnp.defensoria.gob.bo/api/api_formularios_cuestionario'),
+    );
 
     if (response.statusCode == 200 &&
         responseEstablishments.statusCode == 200 &&
-        responseVisitForms.statusCode == 200) {
+        responseVisitForms.statusCode == 200 &&
+        responseForm.statusCode == 200) {
       /* Guarda datos de los tipos de establecimientos */
       List<dynamic> apiData = json.decode(response.body);
       List<EstablishmentTypesModel> tiposEstabs =
@@ -147,6 +184,14 @@ class DatabaseHelper {
       for (var visitForms in visitFormsList) {
         await insertDataEstablishmentVisits(visitForms);
       }
+      /* Guarda las preguntas para el formulario */
+      List<dynamic> apiForm = json.decode(responseForm.body);
+      List<QuestionnarieModel> questionsList =
+          apiForm.map((data) => QuestionnarieModel.fromMap(data)).toList();
+      // insertar los datos en la BD
+      for (var questions in questionsList) {
+        await insertDataQuestions(questions);
+      }
 
       print('Datos insertados');
     } else {
@@ -170,6 +215,11 @@ class DatabaseHelper {
     return await dbVisForms!.insert('visitas_formularios', visitForms.toMap());
   }
 
+  Future<int> insertDataQuestions(QuestionnarieModel questions) async {
+    Database? dbForm = await database;
+    return await dbForm!.insert('cuestionario', questions.toMap());
+  }
+
   Future<List<EstablishmentTypesModel>> getData() async {
     Database? db = await database;
     List<Map<String, dynamic>> maps = await db!.query('tipo_establecimientos');
@@ -177,7 +227,9 @@ class DatabaseHelper {
     List<Map<String, dynamic>> estabs = await db.query('establecimientos');
 
     List<Map<String, dynamic>> visits = await db.query('visitas_formularios');
+    List<Map<String, dynamic>> questionnarie = await db.query('cuestionario');
 
+    print(questionnarie);
     print(visits);
     print(maps);
     print(estabs);
@@ -191,6 +243,7 @@ class DatabaseHelper {
     await db!.execute('delete from tipo_establecimientos');
     await db.execute('delete from establecimientos');
     await db.execute('delete from visitas_formularios');
+    await db.execute('delete from cuestionario');
     print('Datos eliminados');
   }
 

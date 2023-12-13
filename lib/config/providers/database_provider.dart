@@ -17,6 +17,9 @@ class DatabaseProvider with ChangeNotifier {
   List<VisitFormsModel> _forms = [];
   List<VisitFormsModel> get forms => _forms;
 
+  List<QuestionnarieModel> _questions = [];
+  List<QuestionnarieModel> get questions => _questions;
+
   Future<void> loadTypes() async {
     isLoading = true;
     _types = await _databaseHelper.getData();
@@ -46,12 +49,20 @@ class DatabaseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<VisitFormsModel>> loadFormsFromVisit(int visId) async {
+  Future<List<VisitFormsModel>> loadFormsFromVisit(int frmId) async {
       isLoading = true;
-      _forms = await _databaseHelper.getFormsFromVisit( visId );
+      _forms = await _databaseHelper.getFormsFromVisit( frmId );
       isLoading = false;
       notifyListeners();
       return _forms; // Asegúrate de devolver una lista de VisitFormsModel
+  }
+
+  Future<List<QuestionnarieModel>> loadFormsQuestionarie(int frmId) async {
+      isLoading = true;
+      _questions = await _databaseHelper.getQuestionarie( frmId );
+      isLoading = false;
+      notifyListeners();
+      return _questions; // Asegúrate de devolver una lista de VisitFormsModel
   }
 
 }
