@@ -1,3 +1,7 @@
+export 'package:mnp1/config/models/answers_model.dart';
+export 'package:mnp1/config/models/form_grouper_model.dart';
+
+export 'package:mnp1/screens/list_forms_screen.dart';
 
 export 'package:mnp1/config/models/questionnarie_model.dart';
 

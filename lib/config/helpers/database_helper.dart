@@ -67,18 +67,43 @@ class DatabaseHelper {
       CAT_categoria TEXT,
       FRM_titulo TEXT
     )''');
+    await db.execute('''CREATE TABLE agrupador_formularios (
+      AGF_id INTEGER PRIMARY KEY,
+      FK_FRM_id INTEGER,
+      FK_USER_id INTEGER,
+      AGF_copia INTEGER
+      )''');
+    await db.execute('''CREATE TABLE respuestas (
+      id INTEGER PRIMARY KEY,
+      RES_respuesta TEXT,
+      FK_RBF_id INTEGER,
+      FK_AGF_id INTEGER
+      )''');
   }
 
   //Busca las preguntas relacionadas formularios seleccionado
   Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> questions = await db!.query('cuestionario', where: 'FK_FRM_id = ?', whereArgs: [frmId],
-  orderBy: 'RBF_id, RBF_orden');
+    List<Map<String, dynamic>> questions = await db!.query('cuestionario',
+        where: 'FK_FRM_id = ?',
+        whereArgs: [frmId],
+        orderBy: 'RBF_id, RBF_orden');
     return List.generate(questions.length, (i) {
       return QuestionnarieModel.fromMap(questions[i]);
     });
   }
 
+  //Busca las preguntas relacionadas formularios seleccionado
+  Future<List<FormGrouperModel>> getListForms(int fkFrmId) async {
+    Database? db = await database;
+    List<Map<String, dynamic>> questions = await db!.query(
+        'agrupador_formularios',
+        where: 'FK_FRM_id = ?',
+        whereArgs: [fkFrmId]);
+    return List.generate(questions.length, (i) {
+      return FormGrouperModel.fromMap(questions[i]);
+    });
+  }
 
 //Busca las visitas relacionadas con el establecimiento seleccionado
   Future<List<VisitFormsModel>> getFormsFromVisit(int visId) async {
@@ -165,6 +190,7 @@ class DatabaseHelper {
       for (var tipoEst in tiposEstabs) {
         await insertData(tipoEst);
       }
+      print('tipos de establecimientos insertados');
 
       /* Guarda datos de los establecimientos */
       List<dynamic> apiDataEstablishments =
@@ -172,10 +198,10 @@ class DatabaseHelper {
       List<EstablishmentsModel> establishments = apiDataEstablishments
           .map((data) => EstablishmentsModel.fromMap(data))
           .toList();
-      // insertar los datos en la BD
       for (var ests in establishments) {
         await insertDataEstablishments(ests);
       }
+      print('establecimientos insertados');
       /* Guarda las visitas y formularios */
       List<dynamic> apiDataVisits = json.decode(responseVisitForms.body);
       List<VisitFormsModel> visitFormsList =
@@ -184,6 +210,7 @@ class DatabaseHelper {
       for (var visitForms in visitFormsList) {
         await insertDataEstablishmentVisits(visitForms);
       }
+      print('visitas y forms insertados');
       /* Guarda las preguntas para el formulario */
       List<dynamic> apiForm = json.decode(responseForm.body);
       List<QuestionnarieModel> questionsList =
@@ -192,6 +219,7 @@ class DatabaseHelper {
       for (var questions in questionsList) {
         await insertDataQuestions(questions);
       }
+      print('cuestionarios insertados');
 
       print('Datos insertados');
     } else {

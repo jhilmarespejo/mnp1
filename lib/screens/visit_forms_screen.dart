@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
-import 'package:mnp1/screens/questionnarie_screen.dart';
+// import 'package:mnp1/screens/list_forms_screen.dart';
+// import 'package:mnp1/screens/questionnarie_screen.dart';
 import 'package:provider/provider.dart';
 import '../app_constants.dart';
 
@@ -155,7 +156,8 @@ class _VisitsWidget extends StatelessWidget {
    void _navigateForm( BuildContext context, VisitFormsModel form) async {
     await Navigator.push(
       context,
-      MaterialPageRoute( builder: (context) => QuestionnarieScreen(form: form)),
+      // MaterialPageRoute( builder: (context) => QuestionnarieScreen(form: form)),
+      MaterialPageRoute( builder: (context) => ListFormsScreen(form: form)),
     );
     // setState(() {});
   }
