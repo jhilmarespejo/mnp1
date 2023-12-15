@@ -36,44 +36,49 @@ class DatabaseProvider with ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
 // Provider que apunta a la funcion getEstablishmentByName( name, tesId ) establisment_types_helper
-  Future<void> filterEstablishments( name, tesId) async {
+  Future<void> filterEstablishments(name, tesId) async {
     isLoading = true;
-    _estabs = await _databaseHelper.getEstablishmentByName( name, tesId );
+    _estabs = await _databaseHelper.getEstablishmentByName(name, tesId);
     isLoading = false;
     notifyListeners();
   }
 
-
-  Future<void> loadVisitForms( int estId ) async {
+  Future<void> loadVisitForms(int estId) async {
     isLoading = true;
-    _visits = await _databaseHelper.getVisits( estId );
+    _visits = await _databaseHelper.getVisits(estId);
     isLoading = false;
     notifyListeners();
   }
 
   Future<List<VisitFormsModel>> loadFormsFromVisit(int frmId) async {
-      isLoading = true;
-      _forms = await _databaseHelper.getFormsFromVisit( frmId );
-      isLoading = false;
-      notifyListeners();
-      return _forms; // Asegúrate de devolver una lista de VisitFormsModel
+    isLoading = true;
+    _forms = await _databaseHelper.getFormsFromVisit(frmId);
+    isLoading = false;
+    notifyListeners();
+    return _forms; // Asegúrate de devolver una lista de VisitFormsModel
   }
+
   Future<List<FormGrouperModel>> loadListForms(int fkFrmId) async {
-      isLoading = true;
-      _listForms = await _databaseHelper.getListForms( fkFrmId );
-      isLoading = false;
-      notifyListeners();
-      return _listForms; 
+    isLoading = true;
+    _listForms = await _databaseHelper.getListForms(fkFrmId);
+    isLoading = false;
+    notifyListeners();
+    return _listForms;
+  }
+
+  Future<void> putNewCopyForm(int frmId) async {
+    await _databaseHelper.createNewCopyForm(frmId);
+    await loadListForms(frmId);
+    notifyListeners();
   }
 
   Future<List<QuestionnarieModel>> loadFormsQuestionarie(int frmId) async {
-      isLoading = true;
-      _questions = await _databaseHelper.getQuestionarie( frmId );
-      isLoading = false;
-      notifyListeners();
-      return _questions; // Asegúrate de devolver una lista de VisitFormsModel
+    isLoading = true;
+    _questions = await _databaseHelper.getQuestionarie(frmId);
+    isLoading = false;
+    notifyListeners();
+    return _questions; // Asegúrate de devolver una lista de VisitFormsModel
   }
-  
-
 }

@@ -56,10 +56,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
                   ? const Center(child: CircularProgressIndicator())
                   : estabsProvider.estabs.isEmpty
                       ? const Center(
-                          child: Text(
-                            "SIN DATOS!",
-                            style: TextStyle(fontSize: 18),
-                          ),
+                          child: Text( "SIN DATOS!", style: TextStyle(fontSize: 18), ),
                         )
                       : Expanded(
                           child: Padding(
@@ -90,8 +87,7 @@ class _ListEstablismentsScreenState extends State<ListEstablismentsScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                establishment.estNombre ?? '',
+                                              Text( establishment.estNombre ?? '',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .titleMedium,

@@ -6,7 +6,8 @@ import 'dart:convert';
 
 class QuestionnarieScreen extends StatefulWidget {
   final VisitFormsModel form;
-  const QuestionnarieScreen({super.key, required this.form});
+  final FormGrouperModel listF;
+  const QuestionnarieScreen({super.key, required this.form, required this.listF});
 
   @override
   State<QuestionnarieScreen> createState() => _FormScreenState();

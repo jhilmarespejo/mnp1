@@ -93,13 +93,26 @@ class DatabaseHelper {
     });
   }
 
+  // Crea una nueva copia del formulario seleccionado
+  Future<int> createNewCopyForm(int frmId) async {
+  Database? db = await database;
+  int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);
+  print(count);
+  FormGrouperModel newCopyForm = FormGrouperModel(
+    fkFrmId: frmId,
+    fkUserId: 80,
+    agfCopia: count+1,
+  );
+
+  return await db.insert('agrupador_formularios', newCopyForm.toMap());
+}
   //Busca las preguntas relacionadas formularios seleccionado
   Future<List<FormGrouperModel>> getListForms(int fkFrmId) async {
     Database? db = await database;
     List<Map<String, dynamic>> questions = await db!.query(
         'agrupador_formularios',
         where: 'FK_FRM_id = ?',
-        whereArgs: [fkFrmId]);
+        whereArgs: [fkFrmId], orderBy: 'AGF_id DESC');
     return List.generate(questions.length, (i) {
       return FormGrouperModel.fromMap(questions[i]);
     });
@@ -256,11 +269,13 @@ class DatabaseHelper {
 
     List<Map<String, dynamic>> visits = await db.query('visitas_formularios');
     List<Map<String, dynamic>> questionnarie = await db.query('cuestionario');
+    List<Map<String, dynamic>> grouperForms = await db.query('agrupador_formularios');
 
-    print(questionnarie);
-    print(visits);
-    print(maps);
-    print(estabs);
+    print(grouperForms);
+    // print(questionnarie);
+    // print(visits);
+    // print(maps);
+    // print(estabs);
     return List.generate(maps.length, (i) {
       return EstablishmentTypesModel.fromMap(maps[i]);
     });

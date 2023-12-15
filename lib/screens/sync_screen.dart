@@ -74,8 +74,25 @@ class _ButtonsViewState extends State<_ButtonsView> {
               _navigateTipoEstablecimientos(context);
             },
           ),
+          const SizedBox(
+            height: 30,
+          ),
+          FilledButton.icon(
+            icon: const Icon(Icons.get_app_sharp),
+            label: const Text('LOGIN'),
+            onPressed: () {
+              _navigateLogin(context);
+            },
+          ),
         ],
       ),
+    );
+  }
+  
+   void _navigateLogin(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 

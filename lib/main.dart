@@ -17,13 +17,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (context) => DatabaseProvider()),
+        ChangeNotifierProvider(create: (context) => DatabaseProvider()),
         // Agrega más providers según sea necesario
         // ChangeNotifierProvider(create: (context) => EstablishmentsProvider()),
       ],
       child: MaterialApp(
-        theme: AppTheme(selectedColor: 1).getTheme(),
+        theme: AppTheme(selectedColor: 5).getTheme(),
         navigatorKey: AppConstants.globalNavKey,
         debugShowCheckedModeBanner: false,
         home: const Splash(),
