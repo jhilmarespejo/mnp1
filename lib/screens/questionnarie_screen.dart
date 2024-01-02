@@ -35,7 +35,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
     frmIdController = widget.form.frmId;
 
-    questionProvider.loadFormsQuestionarie(frmIdController);
+    questionProvider.loadFormsQuestionnarie(frmIdController);
   }
 
   @override
@@ -57,6 +57,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
       body: Column(
         children: [
           header(),
+
           Expanded(
             child: Container(
               color: Theme.of(context).hoverColor,
@@ -69,6 +70,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
               ),
             ),
           ),
+
           fotter()
         ],
       ),
@@ -78,8 +80,8 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   Widget _buildQuestionSlide(QuestionnarieModel quizItems) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        width: double.infinity,
+      child: SingleChildScrollView(
+        // width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -87,13 +89,14 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                 style: const TextStyle(fontSize: 13),
                 textAlign: TextAlign.center),
             const SizedBox(
-              height: 3,
+              height: 5,
             ),
             Text(quizItems.bcpPregunta,
                 style: const TextStyle(fontSize: 22),
                 textAlign: TextAlign.left),
+            const SizedBox( height: 2,),
             Text(quizItems.bcpTipoRespuesta,
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 15),
                 textAlign: TextAlign.left),
             Text(quizItems.bcpOpciones ?? 'sin opciones',
                 style: const TextStyle(fontSize: 12),
@@ -147,14 +150,19 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   }
 }
 
+
+// se construyen los controles para catipo de pregunta
 Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
   print(quizItems);
   switch (quizItems.bcpTipoRespuesta) {
     case 'Lista desplegable':
-      return RadioOptionsWidget(
+      return RadioButtonsList(
           options: json.decode(quizItems.bcpOpciones ?? ''));
     case 'Afirmación':
-      return RadioOptionsWidget(
+      return RadioButtonsList(
+          options: json.decode(quizItems.bcpOpciones ?? ''));
+    case 'Casilla verificación':
+      return CheckBoxesList(
           options: json.decode(quizItems.bcpOpciones ?? ''));
     // Puedes agregar más casos según sea necesario
     default:
@@ -164,14 +172,15 @@ Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
   }
 }
 
-class RadioOptionsWidget extends StatefulWidget {
+//Se crean controles radio buttons
+class RadioButtonsList extends StatefulWidget {
   final Map<String, dynamic> options;
-  const RadioOptionsWidget({super.key, required this.options});
+  const RadioButtonsList({super.key, required this.options});
   @override
-  _RadioOptionsWidgetState createState() => _RadioOptionsWidgetState();
+ RadioButtonsListState createState() => RadioButtonsListState();
 }
 
-class _RadioOptionsWidgetState extends State<RadioOptionsWidget> {
+class RadioButtonsListState extends State<RadioButtonsList> {
   String? selectedValue;
 
   @override
@@ -193,9 +202,53 @@ class _RadioOptionsWidgetState extends State<RadioOptionsWidget> {
       );
     });
     print(selectedValue);
+    return SingleChildScrollView(
+      child: Column(
+        children: radioListTiles,
+      ),
+    );
+  }
+}
 
-    return Column(
-      children: radioListTiles,
+//Se crean controles para checkList
+class CheckBoxesList extends StatefulWidget {
+  final Map<String, dynamic> options;
+  const CheckBoxesList({Key? key, required this.options}) : super(key: key);
+
+  @override
+  CheckBoxesListState createState() => CheckBoxesListState();
+}
+
+class CheckBoxesListState extends State<CheckBoxesList> {
+  List<String> selectedValues = [];
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> checkBoxListTiles = [];
+
+    widget.options.forEach((key, value) {
+      checkBoxListTiles.add(
+        CheckboxListTile(
+          controlAffinity: ListTileControlAffinity.leading, // Muestra el checkbox antes del texto
+          title: Text(value),
+          value: selectedValues.contains(value),
+          onChanged: (bool? isChecked) {
+            setState(() {
+              if (isChecked!) {
+                selectedValues.add(value);
+              } else {
+                selectedValues.remove(value);
+              }
+            });
+          },
+        ),
+      );
+    });
+    print(selectedValues);
+    return SingleChildScrollView(
+      child: Column(
+        children: checkBoxListTiles,
+      ),
     );
   }
 }

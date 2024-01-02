@@ -74,7 +74,7 @@ class DatabaseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<QuestionnarieModel>> loadFormsQuestionarie(int frmId) async {
+  Future<List<QuestionnarieModel>> loadFormsQuestionnarie(int frmId) async {
     isLoading = true;
     _questions = await _databaseHelper.getQuestionarie(frmId);
     isLoading = false;

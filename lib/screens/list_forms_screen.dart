@@ -149,10 +149,9 @@ class ListFormsScreen extends StatefulWidget {
     await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) =>QuestionnarieScreen( listF: listF, form:form )
-              ),
+        builder: (context) => QuestionnarieScreen( listF: listF, form:form )
+      ),
     );
-    // setState(() {});
   }
 }
 
