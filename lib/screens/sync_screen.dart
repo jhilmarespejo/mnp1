@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SyncScreen extends StatelessWidget {
   const SyncScreen({super.key});
@@ -58,7 +60,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
             },
           ),
           FilledButton.icon(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(Icons.question_answer),
             label: const Text('Consulta X'),
             onPressed: () {
               _queryX();
@@ -68,7 +70,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
             height: 150,
           ),
           FilledButton.icon(
-            icon: const Icon(Icons.get_app_sharp),
+            icon: const Icon(Icons.start_outlined),
             label: const Text('Iniciar'),
             onPressed: () {
               _navigateTipoEstablecimientos(context);
@@ -78,10 +80,21 @@ class _ButtonsViewState extends State<_ButtonsView> {
             height: 30,
           ),
           FilledButton.icon(
-            icon: const Icon(Icons.get_app_sharp),
+            icon: const Icon(Icons.login),
             label: const Text('LOGIN'),
             onPressed: () {
               _navigateLogin(context);
+            },
+          ),
+          FilledButton.icon(
+            icon: const Icon(Icons.key),
+            label: const Text('TOKEN'),
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              String? token = prefs.getString('token');
+              int? userId = prefs.getInt('userId');
+              print(token);
+              print(userId);
             },
           ),
         ],

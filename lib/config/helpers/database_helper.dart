@@ -3,6 +3,8 @@ import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class DatabaseHelper {
   Database? _database;
@@ -173,23 +175,30 @@ class DatabaseHelper {
 
   // Busca informacion de las apis y la inserta en la base de datos local
   Future<void> loadFromApiAndSave() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    print(token);
     final response = await get(
       Uri.parse(
-          'https://test-mnp.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
+        'https://test-mnp.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
+        headers: {'Authorization': 'Bearer $token'},
     );
 
     final responseEstablishments = await get(
       Uri.parse(
-          'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
+        'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
+        headers: {'Authorization': 'Bearer $token'},
     );
 
     final responseVisitForms = await get(
       Uri.parse(
-          'https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
+        'https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
+        headers: {'Authorization': 'Bearer $token'},
     );
     final responseForm = await get(
       Uri.parse(
-          'https://test-mnp.defensoria.gob.bo/api/api_formularios_cuestionario'),
+        'https://test-mnp.defensoria.gob.bo/api/api_formularios_cuestionario'),
+        headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200 &&
@@ -200,6 +209,7 @@ class DatabaseHelper {
       List<dynamic> apiData = json.decode(response.body);
       List<EstablishmentTypesModel> tiposEstabs =
           apiData.map((data) => EstablishmentTypesModel.fromMap(data)).toList();
+
       // insertar los datos en la BD
       for (var tipoEst in tiposEstabs) {
         await insertData(tipoEst);

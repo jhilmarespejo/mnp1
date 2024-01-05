@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -30,8 +30,10 @@ class LoginScreenState extends State<LoginScreen> {
         // print(responseData);
 
         if (responseData['success'] == true) {
-          // Si la respuesta es exitosa y el campo 'success' es true, la validación fue correcta.
-         
+         // Almacenar token y userId en SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('token', responseData['token']);
+          prefs.setInt('userId', responseData['USER_id']);
          
          Navigator.pop(context); // Cerrar la pantalla de inicio de sesión
           ScaffoldMessenger.of(context).showSnackBar(
