@@ -78,6 +78,7 @@ class DatabaseHelper {
       RES_respuesta TEXT,
       FK_RBF_id INTEGER,
       FK_AGF_id INTEGER
+      USER_id INTEGER
       )''');
   }
 
@@ -93,7 +94,7 @@ class DatabaseHelper {
     });
   }
 
-  // Crea una nueva copia del formulario seleccionado
+  // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
   Future<int> createNewCopyForm(int frmId) async {
   Database? db = await database;
   int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);

@@ -1,37 +1,65 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   LoginScreenState createState() => LoginScreenState();
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  void _login() {
-    // Lógica para manejar el inicio de sesión aquí
+  Future<void> _login() async {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    // ... Tu lógica de autenticación aquí ...
-
-    if (username == 'nombre.apellido' && password == 'contrasena') {
-      // Las credenciales son válidas, puedes navegar a la siguiente pantalla o realizar acciones adicionales.
-      // Por ejemplo, aquí cerramos la pantalla actual y mostramos un SnackBar.
-      Navigator.pop(context); // Cerrar la pantalla de inicio de sesión
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Inicio de sesión exitoso.'),
-        ),
+    try {
+      final response = await http.post(
+        Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_iniciar'),
+        body: {'username': username, 'password': password},
       );
-    } else {
-      // Las credenciales no son válidas, puedes mostrar un mensaje de error.
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        // print(responseData);
+
+        if (responseData['success'] == true) {
+          // Si la respuesta es exitosa y el campo 'success' es true, la validación fue correcta.
+         
+         
+         Navigator.pop(context); // Cerrar la pantalla de inicio de sesión
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Validación exitosa.'),
+            ),
+          );
+        } else {
+          // Si el campo 'success' no es true, consideramos que las credenciales son incorrectas.
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Credenciales incorrectas. Inténtalo de nuevo.'),
+            ),
+          );
+        }
+      } else {
+        // Si la respuesta no es exitosa, mostrar un mensaje de error.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error en la solicitud. Inténtalo de nuevo.'),
+          ),
+        );
+      }
+    } catch (error) {
+      // En caso de errores durante la solicitud, también puedes mostrar un mensaje de error.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Credenciales incorrectas. Inténtalo de nuevo.'),
+          content: Text('Error al intentar iniciar sesión. Inténtalo de nuevo.'),
         ),
       );
     }
@@ -48,24 +76,23 @@ class LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Inserta tu logotipo aquí
             Image.asset(
               'assets/logo-defensor.png',
-              height: 70, // Ajusta la altura según tus necesidades
+              height: 70,
             ),
             const SizedBox(height: 20),
             TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Nombre de usuario',
-                  hintText: 'Ingresa tu nombre de usuario',
-                  prefixIcon: const Icon(Icons.person), // Icono antes del campo de texto
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0), // Bordes redondeados
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(context).inputDecorationTheme.fillColor, // Color de fondo
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Nombre de usuario',
+                hintText: 'Ingresa tu nombre de usuario',
+                prefixIcon: const Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
+                filled: true,
+                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+              ),
             ),
             const SizedBox(height: 10),
             TextField(
@@ -78,17 +105,14 @@ class LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 filled: true,
-                 fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               ),
-              // decoration: const InputDecoration(labelText: 'Contraseña'),
-              // obscureText: true,
+              obscureText: true,
             ),
             const SizedBox(height: 20),
-            
-            FilledButton.icon(
-              icon: const Icon(Icons.key_outlined),
-              label: const Text('Iniciar Sesión'),
+            ElevatedButton(
               onPressed: _login,
+              child: const Text('Iniciar Sesión'),
             )
           ],
         ),

@@ -26,7 +26,7 @@ class _EstablishmentsScreenState extends State<EstablishmentTypesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tipos de establecimiento'),
+        title: const Text('Tipos de establecimientos'),
         elevation: 10,
         // backgroundColor:AppTheme(selectedColor:3),
       ),

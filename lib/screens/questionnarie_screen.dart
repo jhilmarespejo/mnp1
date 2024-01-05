@@ -164,7 +164,11 @@ Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
     case 'Casilla verificación':
       return CheckBoxesList(
           options: json.decode(quizItems.bcpOpciones ?? ''));
-    // Puedes agregar más casos según sea necesario
+
+    case 'Respuesta corta':
+      return const AnswerBox( );
+   
+
     default:
       // Otro tipo de respuesta, puedes construir un widget diferente o retornar null
       return Text(
@@ -250,5 +254,53 @@ class CheckBoxesListState extends State<CheckBoxesList> {
         children: checkBoxListTiles,
       ),
     );
+  }
+}
+
+
+class AnswerBox extends StatefulWidget {
+  const AnswerBox({Key? key}) : super(key: key);
+
+  @override
+  LongAnswerBoxState createState() => LongAnswerBoxState();
+}
+
+class LongAnswerBoxState extends State<AnswerBox> {
+  late TextEditingController textController;
+
+  @override
+  void initState() {
+    super.initState();
+    textController = TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        const Text(
+          'Respuesta larga:',
+          style: TextStyle(fontSize: 15),
+          textAlign: TextAlign.left,
+        ),
+        const SizedBox(height: 3),
+        TextField(
+          controller: textController,
+          maxLines: 2, // Puedes ajustar el número de líneas según tus necesidades
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Escribe la respuesta aquí...',
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
   }
 }

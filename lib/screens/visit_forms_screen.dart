@@ -47,7 +47,7 @@ class _VisitFormsScreenState extends State<VisitFormsScreen> {
               const SizedBox(height: 1),
               Text(
                 establishmentTypeController.text,
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 15),
               ),
             ],
           ),
@@ -96,10 +96,9 @@ class _VisitsWidget extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                onExpansionChanged: (isExpanded) {
+                                onExpansionChanged: ( isExpanded ) {
                                   if (isExpanded) {
-                                    visitsProvider
-                                        .loadFormsFromVisit(visit.visId);
+                                    visitsProvider.loadFormsFromVisit(visit.visId);
                                   }
                                 },
                                 initiallyExpanded: false,
