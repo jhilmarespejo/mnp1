@@ -79,7 +79,7 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY,
       RES_respuesta TEXT,
       FK_RBF_id INTEGER,
-      FK_AGF_id INTEGER
+      FK_AGF_id INTEGER,
       USER_id INTEGER
       )''');
   }
@@ -310,6 +310,17 @@ class DatabaseHelper {
     // print(q);
     return List.generate(q.length, (i) {
       return EstablishmentsModel.fromMap(q[i]);
+    });
+  }
+  Future<List<AnswersModel>> queryy() async {
+    Database? db = await database;
+
+    List<Map<String, dynamic>> q = await db!
+        .query('respuestas');
+
+    print(q);
+    return List.generate(q.length, (i) {
+      return AnswersModel.fromMap(q[i]);
     });
   }
 }

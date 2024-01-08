@@ -200,17 +200,38 @@ class RadioButtonsListState extends State<RadioButtonsList> {
           onChanged: (String? newValue) {
             setState(() {
               selectedValue = newValue;
+              saveSelectedAnswerToDatabase(value);
             });
           },
         ),
       );
     });
-    print(selectedValue);
+    // print(selectedValue);
     return SingleChildScrollView(
       child: Column(
         children: radioListTiles,
       ),
     );
+  }
+
+  void saveSelectedAnswerToDatabase(String selectedAnswer) async {
+    // Obtener la instancia del proveedor de base de datos
+    DatabaseProvider databaseProvider =
+        Provider.of<DatabaseProvider>(context, listen: false);
+    int questionId =10 /* Obtener el ID de la pregunta actual */;
+    int formId = 20/* Obtener el ID del formulario actual */;
+    int userId = 80/* Obtener el ID del usuario actual */;
+    AnswersModel answer = AnswersModel(
+      resRespuesta: selectedAnswer,
+      fkRbfId: questionId,
+      fkAgfId: formId,
+      userId: userId,
+    );
+
+    // Guardar la respuesta en la base de datos
+    await databaseProvider.saveAnswer(answer);
+
+    // Puedes realizar cualquier otra acción necesaria después de guardar la respuesta
   }
 }
 

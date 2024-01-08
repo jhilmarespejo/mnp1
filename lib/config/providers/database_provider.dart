@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DatabaseProvider with ChangeNotifier {
   bool isLoading = false;
@@ -81,4 +82,21 @@ class DatabaseProvider with ChangeNotifier {
     notifyListeners();
     return _questions; // Asegúrate de devolver una lista de VisitFormsModel
   }
+
+  Future<void> saveAnswer(AnswersModel answer) async {
+  try {
+    isLoading = true;
+    Database? db = await _databaseHelper.database;
+
+    // Insertar la respuesta en la tabla 'respuestas'
+    await db!.insert('respuestas', answer.toMap());
+
+    isLoading = false;
+    notifyListeners();
+  } catch (e) {
+    print('Error al guardar la respuesta en la base de datos: $e');
+    isLoading = false;
+    rethrow; // Lanzar la excepción nuevamente para que pueda ser manejada en el nivel superior si es necesario
+  }
+}
 }

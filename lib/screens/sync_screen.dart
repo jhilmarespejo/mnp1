@@ -128,12 +128,13 @@ class _ButtonsViewState extends State<_ButtonsView> {
 
   void _queryX() async {
     DatabaseHelper dbHelper = DatabaseHelper();
-    String tesTipo = 'Centro Penitenciario';
-    List<EstablishmentsModel> resultados = await dbHelper.queryx( tesTipo );
-    for (var resultado in resultados) {
-      print(
-          'Tipo: ${resultado.tesTipo},nombre: ${resultado.estNombre},direccion: ${resultado.estDireccion} ');
-    }
+    List<AnswersModel> resultados = await dbHelper.queryy();
+    // String tesTipo = 'Centro Penitenciario';
+    // List<EstablishmentsModel> resultados = await dbHelper.queryx( tesTipo );
+    // for (var resultado in resultados) {
+    //   print(
+    //       'Tipo: ${resultado.tesTipo},nombre: ${resultado.estNombre},direccion: ${resultado.estDireccion} ');
+    // }
   }
 
   void _deletedata() async {
