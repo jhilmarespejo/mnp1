@@ -1,9 +1,11 @@
 import 'dart:convert';
+// import 'dart:html';
 import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart'; // Asegúrate de importar el paquete necesario
 
 
 class DatabaseHelper {
@@ -20,7 +22,7 @@ class DatabaseHelper {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'mnp.db');
 
-    return await openDatabase(path, version: 1, onCreate: _onCreate);
+    return await openDatabase(path, version: 2, onCreate: _onCreate);
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -97,18 +99,37 @@ class DatabaseHelper {
   }
 
   // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
-  Future<int> createNewCopyForm(int frmId) async {
+  Future<int> createNewCopyForm(int frmId, BuildContext context) async {
   Database? db = await database;
   int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);
-  print(count);
-  FormGrouperModel newCopyForm = FormGrouperModel(
-    fkFrmId: frmId,
-    fkUserId: 80,
-    agfCopia: count+1,
-  );
 
-  return await db.insert('agrupador_formularios', newCopyForm.toMap());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final int? userId = prefs.getInt('userId');
+  FormGrouperModel newCopyForm;
+
+  if (userId != null) {
+    // Si userId no es nulo, continuar con el resto del código
+    newCopyForm = FormGrouperModel(
+      fkFrmId: frmId,
+      fkUserId: userId,
+      agfCopia: count + 1,
+    );
+
+    // Intentar insertar en la base de datos
+    return await db.insert('agrupador_formularios', newCopyForm.toMap());
+  } else {
+    // Si userId es nulo, redirigir al usuario a la pantalla de inicio de sesión
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
+
+    // Devolver un valor especial (puedes ajustar este valor según tus necesidades)
+    return 0;
+  }
 }
+
+
   //Busca las preguntas relacionadas formularios seleccionado
   Future<List<FormGrouperModel>> getListForms(int fkFrmId) async {
     Database? db = await database;

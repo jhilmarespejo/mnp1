@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mnp1/screens/sync_screen.dart';
+import 'package:mnp1/screens/login_screen.dart';
 // import 'package:mnp1/screens/user_list_screen.dart';
 
 class Splash extends StatefulWidget {
@@ -23,8 +24,8 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
 
   void navigationPage() {
       Navigator.of(context).push(
-      // MaterialPageRoute(builder: (context) => const UserListScreen()));
       MaterialPageRoute(builder: (context) => const SyncScreen()));
+      // MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   @override

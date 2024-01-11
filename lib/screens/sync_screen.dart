@@ -97,6 +97,14 @@ class _ButtonsViewState extends State<_ButtonsView> {
               print(userId);
             },
           ),
+          FilledButton.icon(
+            icon: const Icon(Icons.key),
+            label: const Text('destroy TOKEN'),
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+            },
+          ),
         ],
       ),
     );

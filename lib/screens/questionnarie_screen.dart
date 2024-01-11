@@ -156,18 +156,14 @@ Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
   print(quizItems);
   switch (quizItems.bcpTipoRespuesta) {
     case 'Lista desplegable':
-      return RadioButtonsList(
-          options: json.decode(quizItems.bcpOpciones ?? ''));
+      return RadioButtonsList( quizItems:quizItems );
     case 'Afirmación':
-      return RadioButtonsList(
-          options: json.decode(quizItems.bcpOpciones ?? ''));
+      return RadioButtonsList( quizItems:quizItems );
     case 'Casilla verificación':
-      return CheckBoxesList(
-          options: json.decode(quizItems.bcpOpciones ?? ''));
+      return CheckBoxesList( quizItems:quizItems );
 
     case 'Respuesta corta':
       return const AnswerBox( );
-   
 
     default:
       // Otro tipo de respuesta, puedes construir un widget diferente o retornar null
@@ -178,8 +174,12 @@ Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
 
 //Se crean controles radio buttons
 class RadioButtonsList extends StatefulWidget {
-  final Map<String, dynamic> options;
-  const RadioButtonsList({super.key, required this.options});
+  // final Map<String, dynamic> options;
+  final QuestionnarieModel quizItems;
+  const RadioButtonsList({
+    Key? key,
+    required this.quizItems,
+  }) : super(key: key);
   @override
  RadioButtonsListState createState() => RadioButtonsListState();
 }
@@ -190,8 +190,8 @@ class RadioButtonsListState extends State<RadioButtonsList> {
   @override
   Widget build(BuildContext context) {
     List<Widget> radioListTiles = [];
-
-    widget.options.forEach((key, value) {
+    Map<String, dynamic>? opciones = json.decode(widget.quizItems.bcpOpciones ?? '{}');
+    opciones?.forEach((key, value) {
       radioListTiles.add(
         RadioListTile<String>(
           title: Text(value),
@@ -218,9 +218,14 @@ class RadioButtonsListState extends State<RadioButtonsList> {
     // Obtener la instancia del proveedor de base de datos
     DatabaseProvider databaseProvider =
         Provider.of<DatabaseProvider>(context, listen: false);
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('userId');
+
     int questionId =10 /* Obtener el ID de la pregunta actual */;
     int formId = 20/* Obtener el ID del formulario actual */;
-    int userId = 80/* Obtener el ID del usuario actual */;
+    // int userId = 80/* Obtener el ID del usuario actual */;
+
     AnswersModel answer = AnswersModel(
       resRespuesta: selectedAnswer,
       fkRbfId: questionId,
@@ -237,8 +242,14 @@ class RadioButtonsListState extends State<RadioButtonsList> {
 
 //Se crean controles para checkList
 class CheckBoxesList extends StatefulWidget {
-  final Map<String, dynamic> options;
-  const CheckBoxesList({Key? key, required this.options}) : super(key: key);
+  // final Map<String, dynamic> options;
+  // const CheckBoxesList({Key? key, required this.options}) : super(key: key);
+  // final Map<String, dynamic> options;
+  final QuestionnarieModel quizItems;
+  const CheckBoxesList({
+    Key? key,
+    required this.quizItems,
+  }) : super(key: key);
 
   @override
   CheckBoxesListState createState() => CheckBoxesListState();
@@ -250,8 +261,9 @@ class CheckBoxesListState extends State<CheckBoxesList> {
   @override
   Widget build(BuildContext context) {
     List<Widget> checkBoxListTiles = [];
+    Map<String, dynamic>? opciones = json.decode(widget.quizItems.bcpOpciones ?? '{}');
 
-    widget.options.forEach((key, value) {
+    opciones?.forEach((key, value) {
       checkBoxListTiles.add(
         CheckboxListTile(
           controlAffinity: ListTileControlAffinity.leading, // Muestra el checkbox antes del texto

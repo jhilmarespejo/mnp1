@@ -69,8 +69,8 @@ class DatabaseProvider with ChangeNotifier {
     return _listForms;
   }
 
-  Future<void> putNewCopyForm(int frmId) async {
-    await _databaseHelper.createNewCopyForm(frmId);
+  Future<void> putNewCopyForm(int frmId, BuildContext context) async {
+    await _databaseHelper.createNewCopyForm(frmId, context);
     await loadListForms(frmId);
     notifyListeners();
   }

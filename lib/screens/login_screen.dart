@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mnp1/screens/sync_screen.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +36,11 @@ class LoginScreenState extends State<LoginScreen> {
           prefs.setString('token', responseData['token']);
           prefs.setInt('userId', responseData['USER_id']);
          
-         Navigator.pop(context); // Cerrar la pantalla de inicio de sesión
+        //  Navigator.pop(context); // Cerrar la pantalla de inicio de sesión
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SyncScreen()),
+        );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Validación exitosa.'),

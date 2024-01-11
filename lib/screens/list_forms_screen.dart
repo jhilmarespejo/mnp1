@@ -60,7 +60,7 @@ class ListFormsScreen extends StatefulWidget {
                 title: Text('${frmTituloController.text} -- $frmIdController'),
                 trailing: const Icon(Icons.add, size: 45.0),
                 onTap: () {
-                  _createNewCopyForm(frmIdController);
+                  _createNewCopyForm(frmIdController, context);
                 },
               ),
             ),
@@ -156,9 +156,9 @@ class ListFormsScreen extends StatefulWidget {
 }
 
 
-  void _createNewCopyForm(int frmId) async {
+  void _createNewCopyForm(int frmId, BuildContext context) async {
     await Provider.of<DatabaseProvider>(
       AppConstants.globalNavKey.currentContext!,
       listen: false,
-    ).putNewCopyForm(frmId);
+    ).putNewCopyForm(frmId, context);
   }
