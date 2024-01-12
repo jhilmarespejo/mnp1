@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:mnp1/config/files.dart';
 import '../app_constants.dart';
 import 'dart:convert';
+import 'package:device_info/device_info.dart';
 
 class QuestionnarieScreen extends StatefulWidget {
   final VisitFormsModel form;
@@ -22,6 +23,9 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
   late TextEditingController frmTituloController = TextEditingController();
   late TextEditingController visTituloController = TextEditingController();
+  late int fkUserIdController;
+  late int fkAgfIdController;
+  late String uniqueId=''; 
 
   get radioListTiles => null;
 
@@ -35,7 +39,23 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
     frmIdController = widget.form.frmId;
 
+    fkUserIdController = widget.listF.fkUserId;
+    fkAgfIdController = widget.listF.agfId!;
+
+    // Obtener el Android ID y asignarlo a IdUnico
+    _getUniqueId();
     questionProvider.loadFormsQuestionnarie(frmIdController);
+  }
+  Future<void> _getUniqueId() async {
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      setState(() {
+        uniqueId = androidInfo.androidId;
+      });
+    } catch (e) {
+      uniqueId = "alternative-unique-ID-$fkUserIdController";
+    }
   }
 
   @override
@@ -105,7 +125,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
             // Convertir la cadena JSON en un mapa de Dart
-            responseTypeEvaluation(quizItems),
+            responseTypeEvaluation(quizItems, fkUserIdController, fkAgfIdController, uniqueId),
             // RadioOptionsWidget(options: json.decode(quizItems.bcpOpciones ?? '')),
           ],
         ),
@@ -152,13 +172,13 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
 
 // se construyen los controles para catipo de pregunta
-Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
-  print(quizItems);
+Widget responseTypeEvaluation(QuestionnarieModel quizItems, int fkUserId, int fkAgfId, String uniqueId) {
+  // print(quizItems);
   switch (quizItems.bcpTipoRespuesta) {
     case 'Lista desplegable':
-      return RadioButtonsList( quizItems:quizItems );
+      return RadioButtonsList( quizItems:quizItems, fkUserId:fkUserId, fkAgfId:fkAgfId, uniqueId:uniqueId );
     case 'Afirmación':
-      return RadioButtonsList( quizItems:quizItems );
+      return RadioButtonsList( quizItems:quizItems, fkUserId:fkUserId, fkAgfId:fkAgfId, uniqueId:uniqueId );
     case 'Casilla verificación':
       return CheckBoxesList( quizItems:quizItems );
 
@@ -174,19 +194,23 @@ Widget responseTypeEvaluation(QuestionnarieModel quizItems) {
 
 //Se crean controles radio buttons
 class RadioButtonsList extends StatefulWidget {
-  // final Map<String, dynamic> options;
   final QuestionnarieModel quizItems;
-  const RadioButtonsList({
+  final int fkUserId;
+  final int fkAgfId;
+  final String uniqueId;
+   const RadioButtonsList({
     Key? key,
     required this.quizItems,
+    required this.fkUserId,
+    required this.fkAgfId,
+    required this.uniqueId,
   }) : super(key: key);
   @override
  RadioButtonsListState createState() => RadioButtonsListState();
 }
-
 class RadioButtonsListState extends State<RadioButtonsList> {
   String? selectedValue;
-
+  
   @override
   Widget build(BuildContext context) {
     List<Widget> radioListTiles = [];
@@ -218,22 +242,21 @@ class RadioButtonsListState extends State<RadioButtonsList> {
     // Obtener la instancia del proveedor de base de datos
     DatabaseProvider databaseProvider =
         Provider.of<DatabaseProvider>(context, listen: false);
-    
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final int? userId = prefs.getInt('userId');
-
-    int questionId =10 /* Obtener el ID de la pregunta actual */;
-    int formId = 20/* Obtener el ID del formulario actual */;
-    // int userId = 80/* Obtener el ID del usuario actual */;
 
     AnswersModel answer = AnswersModel(
       resRespuesta: selectedAnswer,
-      fkRbfId: questionId,
-      fkAgfId: formId,
-      userId: userId,
+      fkRbfId: widget.quizItems.rbfId,
+      fkAgfId: widget.fkAgfId,
+      userId: widget.fkUserId,
+      deviceId: widget.uniqueId
     );
 
     // Guardar la respuesta en la base de datos
+    print(answer.resRespuesta);
+    print(widget.quizItems.rbfId);
+    print(answer.fkAgfId);
+    print(answer.userId);
+    print(answer.deviceId);
     await databaseProvider.saveAnswer(answer);
 
     // Puedes realizar cualquier otra acción necesaria después de guardar la respuesta
@@ -281,7 +304,7 @@ class CheckBoxesListState extends State<CheckBoxesList> {
         ),
       );
     });
-    print(selectedValues);
+    // print(selectedValues);
     return SingleChildScrollView(
       child: Column(
         children: checkBoxListTiles,

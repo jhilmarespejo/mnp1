@@ -4,6 +4,7 @@ class AnswersModel {
   final int fkRbfId;
   final int fkAgfId;
   final int userId;
+  final String deviceId;
  
   // CONSTRUCTOR
   AnswersModel({
@@ -12,6 +13,7 @@ class AnswersModel {
     required this.fkRbfId,
     required this.fkAgfId,
     required this.userId,
+    required this.deviceId,
   });
 
   factory AnswersModel.fromMap(Map<String, dynamic> map) {
@@ -21,6 +23,7 @@ class AnswersModel {
       fkRbfId: map['FK_RBF_id'],
       fkAgfId: map['FK_AGF_id'],
       userId: map['USER_id'],
+      deviceId: map['RES_device_id'],
     );
   }
 
@@ -31,6 +34,7 @@ class AnswersModel {
       'FK_RBF_id': fkRbfId,
       'FK_AGF_id': fkAgfId,
       'USER_id': userId,
+      'RES_device_id': deviceId,
     };
   }
 }

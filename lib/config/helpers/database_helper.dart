@@ -82,7 +82,8 @@ class DatabaseHelper {
       RES_respuesta TEXT,
       FK_RBF_id INTEGER,
       FK_AGF_id INTEGER,
-      USER_id INTEGER
+      USER_id INTEGER,
+      RES_device_id INTEGER
       )''');
   }
 
