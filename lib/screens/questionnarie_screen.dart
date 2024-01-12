@@ -168,6 +168,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
       ),
     );
   }
+
 }
 
 
@@ -180,7 +181,7 @@ Widget responseTypeEvaluation(QuestionnarieModel quizItems, int fkUserId, int fk
     case 'Afirmación':
       return RadioButtonsList( quizItems:quizItems, fkUserId:fkUserId, fkAgfId:fkAgfId, uniqueId:uniqueId );
     case 'Casilla verificación':
-      return CheckBoxesList( quizItems:quizItems );
+      return CheckBoxesList( quizItems:quizItems,  fkUserId:fkUserId, fkAgfId:fkAgfId, uniqueId:uniqueId);
 
     case 'Respuesta corta':
       return const AnswerBox( );
@@ -224,7 +225,7 @@ class RadioButtonsListState extends State<RadioButtonsList> {
           onChanged: (String? newValue) {
             setState(() {
               selectedValue = newValue;
-              saveSelectedAnswerToDatabase(value);
+              saveSelectedAnswerToDatabase( context, value, widget);
             });
           },
         ),
@@ -238,7 +239,9 @@ class RadioButtonsListState extends State<RadioButtonsList> {
     );
   }
 
-  void saveSelectedAnswerToDatabase(String selectedAnswer) async {
+  
+}
+void saveSelectedAnswerToDatabase(BuildContext context, String selectedAnswer, dynamic widget) async {
     // Obtener la instancia del proveedor de base de datos
     DatabaseProvider databaseProvider =
         Provider.of<DatabaseProvider>(context, listen: false);
@@ -250,28 +253,27 @@ class RadioButtonsListState extends State<RadioButtonsList> {
       userId: widget.fkUserId,
       deviceId: widget.uniqueId
     );
-
+  // print(answer.resRespuesta);
+  // print(answer.fkRbfId);
+  // print(answer.fkAgfId);
+  // print(answer.userId);
+  // print(answer.deviceId);
     // Guardar la respuesta en la base de datos
-    print(answer.resRespuesta);
-    print(widget.quizItems.rbfId);
-    print(answer.fkAgfId);
-    print(answer.userId);
-    print(answer.deviceId);
     await databaseProvider.saveAnswer(answer);
-
-    // Puedes realizar cualquier otra acción necesaria después de guardar la respuesta
   }
-}
 
 //Se crean controles para checkList
 class CheckBoxesList extends StatefulWidget {
-  // final Map<String, dynamic> options;
-  // const CheckBoxesList({Key? key, required this.options}) : super(key: key);
-  // final Map<String, dynamic> options;
   final QuestionnarieModel quizItems;
+  final int fkUserId;
+  final int fkAgfId;
+  final String uniqueId;
   const CheckBoxesList({
-    Key? key,
+   Key? key,
     required this.quizItems,
+    required this.fkUserId,
+    required this.fkAgfId,
+    required this.uniqueId,
   }) : super(key: key);
 
   @override
@@ -296,6 +298,7 @@ class CheckBoxesListState extends State<CheckBoxesList> {
             setState(() {
               if (isChecked!) {
                 selectedValues.add(value);
+                saveSelectedAnswerToDatabase( context, value, widget);
               } else {
                 selectedValues.remove(value);
               }
@@ -312,6 +315,7 @@ class CheckBoxesListState extends State<CheckBoxesList> {
     );
   }
 }
+
 
 
 class AnswerBox extends StatefulWidget {
@@ -360,3 +364,4 @@ class LongAnswerBoxState extends State<AnswerBox> {
     super.dispose();
   }
 }
+

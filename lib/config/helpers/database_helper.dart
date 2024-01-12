@@ -345,4 +345,9 @@ class DatabaseHelper {
       return AnswersModel.fromMap(q[i]);
     });
   }
+  Future<void> delRespuestas() async {
+    Database? db = await database;
+    await db!.execute('delete from respuestas');
+    print('Respuestas eliminadas');
+  }
 }

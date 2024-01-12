@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SyncScreen extends StatelessWidget {
@@ -93,8 +93,8 @@ class _ButtonsViewState extends State<_ButtonsView> {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               String? token = prefs.getString('token');
               int? userId = prefs.getInt('userId');
-              print(token);
-              print(userId);
+              // print(token);
+              // print(userId);
             },
           ),
           FilledButton.icon(
@@ -105,12 +105,19 @@ class _ButtonsViewState extends State<_ButtonsView> {
               prefs.clear();
             },
           ),
+          FilledButton.icon(
+            icon: const Icon(Icons.delete_forever),
+            label: const Text('Delete respuestas'),
+            onPressed: () async {
+              _deleteRespuestas();
+            },
+          ),
         ],
       ),
     );
   }
   
-   void _navigateLogin(BuildContext context) async {
+  void _navigateLogin(BuildContext context) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -122,7 +129,6 @@ class _ButtonsViewState extends State<_ButtonsView> {
       context,
       MaterialPageRoute(builder: (context) => const EstablishmentTypesScreen()),
     );
-    // setState(() {});
   }
 
   void _loaddata() async {
@@ -143,6 +149,11 @@ class _ButtonsViewState extends State<_ButtonsView> {
     //   print(
     //       'Tipo: ${resultado.tesTipo},nombre: ${resultado.estNombre},direccion: ${resultado.estDireccion} ');
     // }
+  }
+  void _deleteRespuestas() async {
+    // DatabaseHelper dbHelper = DatabaseHelper();
+    // List<AnswersModel> resultados = await dbHelper.delRespuestas();
+    await tipoEst.delRespuestas();
   }
 
   void _deletedata() async {
