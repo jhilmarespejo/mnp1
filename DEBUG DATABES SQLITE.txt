@@ -1,0 +1,9 @@
+com.example.mnp1
+/data/user/0/com.example.mnp1/databases
+
+
+1 	C:\Users\admin\AppData\Local\Android\Sdk
+2 	adb devices
+3 	adb -s 083913027T106043 shell
+4  	run-as com.example.mnp1
+5 	cd /data/user/0/com.example.mnp1/databases

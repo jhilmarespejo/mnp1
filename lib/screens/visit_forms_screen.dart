@@ -152,10 +152,10 @@ class _VisitsWidget extends StatelessWidget {
       },
     );
   }
+  // navega a la pantalla de 
    void _navigateForm( BuildContext context, VisitFormsModel form) async {
     await Navigator.push(
       context,
-      // MaterialPageRoute( builder: (context) => QuestionnarieScreen(form: form)),
       MaterialPageRoute( builder: (context) => ListFormsScreen(form: form)),
     );
     // setState(() {});

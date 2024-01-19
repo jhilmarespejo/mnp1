@@ -21,8 +21,11 @@ class DatabaseProvider with ChangeNotifier {
   List<FormGrouperModel> _listForms = [];
   List<FormGrouperModel> get listForms => _listForms;
 
-  List<QuestionnarieModel> _questions = [];
-  List<QuestionnarieModel> get questions => _questions;
+  List<Map<String, dynamic>> _questions = [];
+  List<Map<String, dynamic>> get questions => _questions;
+
+  List<Map<String, dynamic>> _checkAnswer = [];
+  List<Map<String, dynamic>> get checkAnswer => _checkAnswer;
 
   Future<void> loadTypes() async {
     isLoading = true;
@@ -75,28 +78,49 @@ class DatabaseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<QuestionnarieModel>> loadFormsQuestionnarie(int frmId) async {
+  Future<dynamic> loadFormsQuestionnarie(int frmId, int agfId) async {
     isLoading = true;
-    _questions = await _databaseHelper.getQuestionarie(frmId);
+    _questions = await _databaseHelper.getQuestionarie(frmId, agfId);
     isLoading = false;
     notifyListeners();
-    return _questions; // Asegúrate de devolver una lista de VisitFormsModel
+    return _questions;
   }
 
-  Future<void> saveAnswer(AnswersModel answer) async {
-  try {
-    isLoading = true;
-    Database? db = await _databaseHelper.database;
-
-    // Insertar la respuesta en la tabla 'respuestas'
-    await db!.insert('respuestas', answer.toMap());
-
-    isLoading = false;
-    notifyListeners();
-  } catch (e) {
-    print('Error al guardar la respuesta en la base de datos: $e');
-    isLoading = false;
-    rethrow; // Lanzar la excepción nuevamente para que pueda ser manejada en el nivel superior si es necesario
+  Future<dynamic> checkExistingAnswer( int fkRbfId,  int fkAgfId) async {
+    try {
+      isLoading = true;
+      _checkAnswer = await _databaseHelper.getExistingAnswer(fkRbfId, fkAgfId);
+      isLoading = false;
+      notifyListeners();
+      return _checkAnswer;
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      print('Error en checkExistingAnswer: $e');
+      return null; // Otra forma de manejar errores según tus necesidades
+    }
   }
+  
+  /// Inserta una nueva respuesta en la base de datos y notifica a los oyentes.
+  Future<void> putNewAnswer( answer ) async {
+    try {
+      await _databaseHelper.createNewAnswer(answer);
+      notifyListeners();
+    } catch (error) {
+      print('Error al insertar nueva respuesta: $error');
+    }
+  }
+
+  Future<void> updateAnswer(dynamic answer, int fkRbfId, int fkAgfId) async {
+    try {
+      await _databaseHelper.updateActualAnswer(answer, fkRbfId, fkAgfId);
+      notifyListeners();
+    } catch (error) {
+      print('Error al actualizar respuesta: $error');
+    }
+  }
+
 }
-}
+
+  
+// }

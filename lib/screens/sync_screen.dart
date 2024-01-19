@@ -93,8 +93,8 @@ class _ButtonsViewState extends State<_ButtonsView> {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               String? token = prefs.getString('token');
               int? userId = prefs.getInt('userId');
-              // print(token);
-              // print(userId);
+              print(token);
+              print(userId);
             },
           ),
           FilledButton.icon(
@@ -142,7 +142,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
 
   void _queryX() async {
     DatabaseHelper dbHelper = DatabaseHelper();
-    List<AnswersModel> resultados = await dbHelper.queryy();
+    List<AnswersModel> resultados = await dbHelper.getAnswers();
     // String tesTipo = 'Centro Penitenciario';
     // List<EstablishmentsModel> resultados = await dbHelper.queryx( tesTipo );
     // for (var resultado in resultados) {

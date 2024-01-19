@@ -4,7 +4,7 @@ import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart'; // Asegúrate de importar el paquete necesario
 
 
@@ -87,17 +87,44 @@ class DatabaseHelper {
       )''');
   }
 
-  //Busca las preguntas relacionadas formularios seleccionado
-  Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
+  //Busca las PREGUNTAS Y RESPUESTAS relacionadas al formulario seleccionado
+  // Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
+  //   Database? db = await database;
+  //   List<Map<String, dynamic>> questions = await db!.query('cuestionario',
+  //       where: 'FK_FRM_id = ?',
+  //       whereArgs: [frmId],
+  //       orderBy: 'RBF_id, RBF_orden');
+  //   return List.generate(questions.length, (i) {
+  //     return QuestionnarieModel.fromMap(questions[i]);
+  //   });
+  // }
+
+  Future<List<Map<String, dynamic>>> getQuestionarie(int frmId, int agfId) async {
     Database? db = await database;
-    List<Map<String, dynamic>> questions = await db!.query('cuestionario',
-        where: 'FK_FRM_id = ?',
-        whereArgs: [frmId],
-        orderBy: 'RBF_id, RBF_orden');
-    return List.generate(questions.length, (i) {
-      return QuestionnarieModel.fromMap(questions[i]);
-    });
+    List<Map<String, dynamic>> result = await db!.rawQuery('''
+      SELECT c.*, r.RES_respuesta, af.AGF_id, af.FK_USER_id, af.AGF_copia
+      FROM agrupador_formularios af
+      JOIN cuestionario c ON af.FK_FRM_id = c.FK_FRM_id
+      LEFT JOIN respuestas r ON c.RBF_id = r.FK_RBF_id AND r.FK_AGF_id = af.AGF_id
+      WHERE af.FK_FRM_id = ? and af.AGF_id = ?
+      ORDER BY c.RBF_orden, c.RBF_id
+    ''', [frmId, agfId]);
+    // for (var item in result) {
+    //   print(jsonEncode(item));
+    // }
+    return result;
   }
+
+  // Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
+  //   List<Map<String, dynamic>> questionarieWithAnswers = await getQuestionarieWithAnswers(frmId);
+
+  //   return List.generate(questionarieWithAnswers.length, (i) {
+  //     return QuestionnarieModel.fromMap(questionarieWithAnswers[i]);
+  //   });
+  // }
+  //Busca las PREGUNTAS Y RESPUESTAS relacionadas al formulario seleccionado
+  
+ 
 
   // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
   Future<int> createNewCopyForm(int frmId, BuildContext context) async {
@@ -120,6 +147,7 @@ class DatabaseHelper {
     return await db.insert('agrupador_formularios', newCopyForm.toMap());
   } else {
     // Si userId es nulo, redirigir al usuario a la pantalla de inicio de sesión
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -334,20 +362,49 @@ class DatabaseHelper {
       return EstablishmentsModel.fromMap(q[i]);
     });
   }
-  Future<List<AnswersModel>> queryy() async {
+  Future<List<AnswersModel>> getAnswers() async {
     Database? db = await database;
-
     List<Map<String, dynamic>> q = await db!
         .query('respuestas');
-
-    print(q);
     return List.generate(q.length, (i) {
       return AnswersModel.fromMap(q[i]);
     });
   }
+  
   Future<void> delRespuestas() async {
     Database? db = await database;
     await db!.execute('delete from respuestas');
     print('Respuestas eliminadas');
   }
+
+  
+  // Verifica si la pregunta a insertar ya existe en la tabla respuestas de la BD local
+  Future<List<Map<String, dynamic>>> getExistingAnswer(int fkRbfId, int fkAgfId) async {
+    Database? db = await database;
+     List<Map<String, dynamic>> checkAnswer = await db!.query('respuestas',
+        where: 'FK_RBF_id = ? AND FK_AGF_id = ?',
+        whereArgs: [fkRbfId, fkAgfId]);
+    return checkAnswer;
+  }
+
+  // inserta la nueva respuesta en la BD
+  createNewAnswer( dynamic answer) async {
+    Database? db = await database;
+    await db!.insert('respuestas', answer.toMap());
+  }
+
+  // Actualiza la respuesta actual por que ya existe su registro en la BD
+  updateActualAnswer( dynamic answer, int fkRbfId, int fkAgfId ) async {
+    Database? db = await database;
+    Map<String, dynamic> updateValues = {
+      'RES_respuesta': answer,
+    };
+      await db!.update(
+        'respuestas',
+        updateValues,
+        where: 'FK_RBF_id = ? AND FK_AGF_id = ?',
+        whereArgs: [fkRbfId, fkAgfId],
+      );
+  }
+  
 }

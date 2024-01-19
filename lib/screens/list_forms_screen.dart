@@ -98,7 +98,7 @@ class ListFormsScreen extends StatefulWidget {
                           final listF = listFormProvider.listForms[index];
                           return InkWell(
                             onTap: () {
-                              _navigateQuestionnarie(context, listF, form );
+                              _navigateQuestionnarie( context, listF, form );
                             },
                             child: Card(
                               margin: const EdgeInsets.all(1),
@@ -122,7 +122,7 @@ class ListFormsScreen extends StatefulWidget {
                                                     ? '${frmTituloController.text.substring(0, 30)}...'
                                                     : frmTituloController.text,
                                               ),
-                                              Text(listF.agfCopia.toString()),
+                                              Text('AGF_id: ${listF.agfId.toString()}'),
                                             ],
                                           ),
                                         ),
@@ -145,7 +145,7 @@ class ListFormsScreen extends StatefulWidget {
   }
 
 
-    void _navigateQuestionnarie( BuildContext context, FormGrouperModel listF, VisitFormsModel form) async {
+  void _navigateQuestionnarie( BuildContext context, FormGrouperModel listF, VisitFormsModel form) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -154,7 +154,6 @@ class ListFormsScreen extends StatefulWidget {
     );
   }
 }
-
 
   void _createNewCopyForm(int frmId, BuildContext context) async {
     await Provider.of<DatabaseProvider>(

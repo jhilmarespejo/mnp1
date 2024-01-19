@@ -1,6 +1,6 @@
 class AnswersModel {
   final int? id;
-  final String resRespuesta; 
+  final dynamic resRespuesta; 
   final int fkRbfId;
   final int fkAgfId;
   final int userId;
@@ -9,7 +9,7 @@ class AnswersModel {
   // CONSTRUCTOR
   AnswersModel({
     this.id,
-    required this.resRespuesta,
+     this.resRespuesta,
     required this.fkRbfId,
     required this.fkAgfId,
     required this.userId,
