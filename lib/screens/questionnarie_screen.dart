@@ -15,6 +15,7 @@ class QuestionnarieScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<QuestionnarieScreen> {
+
   final questionProvider =
       Provider.of<DatabaseProvider>(AppConstants.globalNavKey.currentContext!);
   late int frmIdController;
@@ -28,6 +29,9 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   late String uniqueId=''; 
 
   get radioListTiles => null;
+
+  late PageController _pageController; // Agrega el controlador de la página
+  bool isLoading = false; // Variable para controlar la visibilidad del indicador de carga
 
   @override
   void initState() {
@@ -46,6 +50,28 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     _getUniqueId();
     
     questionProvider.loadFormsQuestionnarie(frmIdController, fkAgfIdController);
+    _pageController = PageController(); // Inicializar el controlador de la página
+
+    // Agregar un listener para detectar cambios de página
+    _pageController.addListener(() {
+      int currentPage = _pageController.page!.round();
+      // print("Cambiado a la página: $currentPage");
+      
+      // Mostrar el indicador de carga durante la transición de página
+      setState(() {
+        isLoading = true;
+      });
+
+
+      // Ocultar el indicador de carga después de un breve tiempo (puedes ajustar según tus necesidades)
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+
+    });
+    
   }
   Future<void> _getUniqueId() async {
     try {
@@ -57,6 +83,11 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     } catch (e) {
       uniqueId = "alternative-unique-ID-$fkUserIdController";
     }
+  }
+  @override
+  void dispose() {
+    _pageController.dispose(); // Liberar recursos del controlador de la página
+    super.dispose();
   }
 
   @override
@@ -83,6 +114,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             child: Container(
               color: Theme.of(context).hoverColor,
               child: PageView.builder(
+                controller: _pageController, // Usar el controlador de la página
                 itemCount: questionProvider.questions.length,
                 itemBuilder: (context, index) {
                   final quizItems = questionProvider.questions[index];
@@ -99,13 +131,10 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   }
 
   Widget _buildQuestionSlide(List<Map<String, dynamic>> quizItems) {
-    print(quizItems[0]['CAT_subcategoria']);
-    // for (var item in quizItems) {
-    // }
+  
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
-        // width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -138,7 +167,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
             // Convertir la cadena JSON en un mapa de Dart
-            responseTypeEvaluation(quizItems, fkUserIdController, fkAgfIdController, uniqueId),
+            responseTypeEvaluation(quizItems, uniqueId),
             // RadioOptionsWidget(options: json.decode(quizItems[0]['bcpOpciones'] ?? '')),
           ],
         ),
@@ -157,6 +186,8 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             style: const TextStyle(fontSize: 15),
             textAlign: TextAlign.center,
           ),
+          // Mostrar el indicador de carga cuando isLoading es true
+          if (isLoading) const LinearProgressIndicator(minHeight: 10.0),
         ],
       ),
     );
