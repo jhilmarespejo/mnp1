@@ -8,20 +8,29 @@ import 'dart:convert';
 // import 'package:device_info/device_info.dart';
 
 Widget responseTypeEvaluation(List<Map<String, dynamic>> quizItems, String uniqueId) {
-  switch (quizItems[0]['BCP_tipoRespuesta']) {
-    case 'Lista desplegable':
-      return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
-    case 'Afirmación':
-      return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
-    case 'Casilla verificación':
-      return CheckBoxesList( quizItems:quizItems,  uniqueId:uniqueId);
+  // switch (quizItems[0]['BCP_tipoRespuesta']) {
+  //   case 'Lista desplegable':
+  //     return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
+  //   case 'Afirmación':
+  //     return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
+  //   case 'Casilla verificación':
+  //     return CheckBoxesList( quizItems:quizItems,  uniqueId:uniqueId);
 
-    case 'Respuesta corta':
-      return const AnswerBox( );
-
-    default:
-      return Text(
-          'Tipo de respuesta no compatible: ${quizItems[0]['BCP_tipoRespuesta']}');
+  //   case 'Respuesta corta':
+  //     return const AnswerBox( );
+  //   default:
+  //     return Text(
+  //         'Tipo de respuesta no compatible: ${quizItems[0]['BCP_tipoRespuesta']}');
+  // }
+  if( quizItems[0]['BCP_tipoRespuesta'] == 'Lista desplegable' || quizItems[0]['BCP_tipoRespuesta'] == 'Afirmación' ){
+    return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
+  }else if(quizItems[0]['BCP_tipoRespuesta'] == 'Casilla verificación'){
+    return CheckBoxesList( quizItems:quizItems,  uniqueId:uniqueId);
+  }
+  else if(quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta corta' || quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta larga' || quizItems[0]['BCP_tipoRespuesta'] == 'Numeral'){
+    return const AnswerBox( );
+  } else {
+    return Text('Tipo de respuesta no compatible: ${quizItems[0]['BCP_tipoRespuesta']}');
   }
 }
 
@@ -45,6 +54,18 @@ class CheckBoxesList extends StatefulWidget {
 
 class CheckBoxesListState extends State<CheckBoxesList> {
   List<String> selectedValues = [];
+
+
+    @override
+    void initState() {
+      super.initState();
+      // Obtener respuestas prealmacenadas y marcar las opciones correspondientes
+      String? storedAnswers = widget.quizItems[0]['RES_respuesta'];
+      if (storedAnswers != null && storedAnswers.isNotEmpty) {
+        List<String> storedValues = json.decode(storedAnswers).cast<String>();
+        selectedValues.addAll(storedValues);
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +101,16 @@ class CheckBoxesListState extends State<CheckBoxesList> {
       ),
     );
   }
+
+  void updateSelectedValues(String value) {
+    setState(() {
+      if (selectedValues.contains(value)) {
+        selectedValues.remove(value);
+      } else {
+        selectedValues.add(value);
+      }
+    });
+  }
 }
 
 //Se crean controles radio buttons
@@ -104,6 +135,17 @@ class RadioButtonsListState extends State<RadioButtonsList> {
   String? selectedValue;
   
   @override
+  void initState() {
+    super.initState();
+
+    // Obtener respuesta prealmacenada y establecerla como seleccionada
+    String? storedAnswer = widget.quizItems[0]['RES_respuesta'];
+    if (storedAnswer != null && storedAnswer.isNotEmpty) {
+      selectedValue = storedAnswer;
+    }
+  }
+  
+  @override
   Widget build(BuildContext context) {
     List<Widget> radioListTiles = [];
     Map<String, dynamic>? opciones = json.decode(widget.quizItems[0]['BCP_opciones'] ?? '{}');
@@ -122,12 +164,18 @@ class RadioButtonsListState extends State<RadioButtonsList> {
         ),
       );
     });
-    print(selectedValue);
+    // print(selectedValue);
     return SingleChildScrollView(
       child: Column(
         children: radioListTiles,
       ),
     );
+  }
+  
+  void updateSelectedValue(String value) {
+    setState(() {
+      selectedValue = value;
+    });
   }
 }
 
