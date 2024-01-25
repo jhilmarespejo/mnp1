@@ -1,6 +1,7 @@
 // questionnaire_utils.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:mnp1/config/files.dart';
 // import '../app_constants.dart';
@@ -8,27 +9,13 @@ import 'dart:convert';
 // import 'package:device_info/device_info.dart';
 
 Widget responseTypeEvaluation(List<Map<String, dynamic>> quizItems, String uniqueId) {
-  // switch (quizItems[0]['BCP_tipoRespuesta']) {
-  //   case 'Lista desplegable':
-  //     return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
-  //   case 'Afirmación':
-  //     return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
-  //   case 'Casilla verificación':
-  //     return CheckBoxesList( quizItems:quizItems,  uniqueId:uniqueId);
-
-  //   case 'Respuesta corta':
-  //     return const AnswerBox( );
-  //   default:
-  //     return Text(
-  //         'Tipo de respuesta no compatible: ${quizItems[0]['BCP_tipoRespuesta']}');
-  // }
   if( quizItems[0]['BCP_tipoRespuesta'] == 'Lista desplegable' || quizItems[0]['BCP_tipoRespuesta'] == 'Afirmación' ){
     return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
   }else if(quizItems[0]['BCP_tipoRespuesta'] == 'Casilla verificación'){
     return CheckBoxesList( quizItems:quizItems,  uniqueId:uniqueId);
   }
   else if(quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta corta' || quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta larga' || quizItems[0]['BCP_tipoRespuesta'] == 'Numeral'){
-    return const AnswerBox( );
+    return AnswerBox( quizItems:quizItems,  uniqueId:uniqueId );
   } else {
     return Text('Tipo de respuesta no compatible: ${quizItems[0]['BCP_tipoRespuesta']}');
   }
@@ -203,7 +190,12 @@ void saveSelectedAnswerToDatabase(BuildContext context, dynamic selectedAnswer, 
 
 
 class AnswerBox extends StatefulWidget {
-  const AnswerBox({Key? key}) : super(key: key);
+  final List<Map<String, dynamic>> quizItems;
+  final String uniqueId;
+  const AnswerBox({Key? key,
+    required this.quizItems,
+    required this.uniqueId,
+  }) : super(key: key);
 
   @override
   LongAnswerBoxState createState() => LongAnswerBoxState();
@@ -211,7 +203,6 @@ class AnswerBox extends StatefulWidget {
 
 class LongAnswerBoxState extends State<AnswerBox> {
   late TextEditingController textController;
-
   @override
   void initState() {
     super.initState();
@@ -220,24 +211,48 @@ class LongAnswerBoxState extends State<AnswerBox> {
 
   @override
   Widget build(BuildContext context) {
+    // print(widget.quizItems[0]['BCP_tipoRespuesta']);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10),
-        const Text(
-          'Respuesta larga:',
-          style: TextStyle(fontSize: 15),
-          textAlign: TextAlign.left,
-        ),
-        const SizedBox(height: 3),
-        TextField(
-          controller: textController,
-          maxLines: 2,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'Escribe la respuesta aquí...',
+        if( widget.quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta larga' )
+        ...[
+          const SizedBox(height: 3),
+          TextField(
+            controller: textController,
+            maxLines: 2,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Escribe la respuesta aquí...',
+            ),
           ),
-        ),
+        ],
+        if(widget.quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta corta' )
+        ...[
+          const SizedBox(height: 3),
+          TextField(
+            controller: textController,
+            maxLines: 1,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Escribe la respuesta aquí...',
+            ),
+          ),
+        ],
+        if(widget.quizItems[0]['BCP_tipoRespuesta'] == 'Numeral' )
+        ...[
+          const SizedBox(height: 3),
+          TextField(
+            controller: textController,
+            maxLines: 1,
+            keyboardType: TextInputType.number, // Define el tipo de teclado
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly], // Permite solo dígitos
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Escribe la respuesta aquí...',
+            ),
+          ),
+        ],
       ],
     );
   }

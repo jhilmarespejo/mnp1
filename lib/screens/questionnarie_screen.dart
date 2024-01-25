@@ -54,7 +54,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
     // Agregar un listener para detectar cambios de página
     _pageController.addListener(() {
-      int currentPage = _pageController.page!.round();
+      // int currentPage = _pageController.page!.round();
       // print("Cambiado a la página: $currentPage");
       
       // Mostrar el indicador de carga durante la transición de página
@@ -62,9 +62,9 @@ class _FormScreenState extends State<QuestionnarieScreen> {
         isLoading = true;
       });
 
-
+      FocusScope.of(context).requestFocus(FocusNode());
       // Ocultar el indicador de carga después de un breve tiempo (puedes ajustar según tus necesidades)
-      Future.delayed(const Duration(milliseconds: 1500), () {
+      Future.delayed(const Duration(milliseconds: 300), () {
         setState(() {
           isLoading = false;
         });
