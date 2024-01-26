@@ -212,47 +212,22 @@ class LongAnswerBoxState extends State<AnswerBox> {
   @override
   Widget build(BuildContext context) {
     // print(widget.quizItems[0]['BCP_tipoRespuesta']);
+    final String responseType = widget.quizItems[0]['BCP_tipoRespuesta'];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if( widget.quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta larga' )
-        ...[
+        // if( widget.quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta larga' )
           const SizedBox(height: 3),
           TextField(
             controller: textController,
-            maxLines: 2,
+            maxLines: responseType == 'Respuesta larga'? 2: 1,
+            inputFormatters: responseType == 'Numeral'? [FilteringTextInputFormatter.digitsOnly] : null,
+             keyboardType: responseType == 'Numeral'? TextInputType.number : null, // Define el tipo de teclado
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Escribe la respuesta aquí...',
             ),
           ),
-        ],
-        if(widget.quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta corta' )
-        ...[
-          const SizedBox(height: 3),
-          TextField(
-            controller: textController,
-            maxLines: 1,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Escribe la respuesta aquí...',
-            ),
-          ),
-        ],
-        if(widget.quizItems[0]['BCP_tipoRespuesta'] == 'Numeral' )
-        ...[
-          const SizedBox(height: 3),
-          TextField(
-            controller: textController,
-            maxLines: 1,
-            keyboardType: TextInputType.number, // Define el tipo de teclado
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly], // Permite solo dígitos
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Escribe la respuesta aquí...',
-            ),
-          ),
-        ],
       ],
     );
   }

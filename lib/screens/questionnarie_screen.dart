@@ -62,9 +62,8 @@ class _FormScreenState extends State<QuestionnarieScreen> {
         isLoading = true;
       });
 
-      FocusScope.of(context).requestFocus(FocusNode());
       // Ocultar el indicador de carga después de un breve tiempo (puedes ajustar según tus necesidades)
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 100), () {
         setState(() {
           isLoading = false;
         });
@@ -187,7 +186,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             textAlign: TextAlign.center,
           ),
           // Mostrar el indicador de carga cuando isLoading es true
-          if (isLoading) const LinearProgressIndicator(minHeight: 10.0),
+         
         ],
       ),
     );
@@ -197,25 +196,31 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     return Container(
       padding: const EdgeInsets.all(16.0),
       width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text("<"),
+          if (isLoading) const LinearProgressIndicator(minHeight: 2.5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text("<"),
+              ),
+              ElevatedButton(
+                onPressed: () {_viewAnswers();},
+                child: const Text("RESP"),
+              ),
+              ElevatedButton(
+                onPressed: () {_queryDelR();},
+                child: const Text("Elim RESP"),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text(">"),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {_viewAnswers();},
-            child: const Text("RESP"),
-          ),
-          ElevatedButton(
-            onPressed: () {_queryDelR();},
-            child: const Text("Elim RESP"),
-          ),
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text(">"),
-          ),
+          
         ],
       ),
     );
