@@ -15,6 +15,7 @@ class QuestionnarieModel {
   final String catSubcategoria;
   final String catCategoria;
   final String frmTitulo;
+  final String? rbfSaltoFkBcpId;
 
   // UserModel({this.id, required this.name, required this.email, required this.desc});
   // CONSTRUCTOR
@@ -35,6 +36,7 @@ class QuestionnarieModel {
     required this.catSubcategoria,
     required this.catCategoria,
     required this.frmTitulo,
+    this.rbfSaltoFkBcpId,
 
   });
 
@@ -56,6 +58,7 @@ class QuestionnarieModel {
       catSubcategoria: map['CAT_subcategoria'],
       catCategoria: map['CAT_categoria'],
       frmTitulo: map['FRM_titulo'],
+      rbfSaltoFkBcpId: map['RBF_salto_FK_BCP_id'],
     );
   }
 
@@ -77,6 +80,7 @@ class QuestionnarieModel {
       'CAT_subcategoria': catSubcategoria,
       'CAT_categoria': catCategoria,
       'FRM_titulo': frmTitulo,
+      'RBF_salto_FK_BCP_id': rbfSaltoFkBcpId,
     };
   }
 }

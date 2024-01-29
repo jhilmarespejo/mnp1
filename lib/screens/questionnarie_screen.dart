@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mnp1/config/files.dart';
@@ -15,7 +17,7 @@ class QuestionnarieScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<QuestionnarieScreen> {
-
+  
   final questionProvider =
       Provider.of<DatabaseProvider>(AppConstants.globalNavKey.currentContext!);
   late int frmIdController;
@@ -32,6 +34,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
   late PageController _pageController; // Agrega el controlador de la página
   bool isLoading = false; // Variable para controlar la visibilidad del indicador de carga
+  // Map<int, Key> pageKeysMap = {};
 
   @override
   void initState() {
@@ -48,29 +51,14 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
     // Obtener el Android ID y asignarlo a IdUnico
     _getUniqueId();
+    // Antes de construir el PageView.builder
+    // for (final quizItems in questionProvider.questions) {
+    //   final bcpId = quizItems[0]['FK_BCP_id'];
+    //   pageKeysMap[bcpId] = GlobalKey();
+    // }
     
     questionProvider.loadFormsQuestionnarie(frmIdController, fkAgfIdController);
-    _pageController = PageController(); // Inicializar el controlador de la página
-
-    // Agregar un listener para detectar cambios de página
-    _pageController.addListener(() {
-      // int currentPage = _pageController.page!.round();
-      // print("Cambiado a la página: $currentPage");
-      
-      // Mostrar el indicador de carga durante la transición de página
-      setState(() {
-        isLoading = true;
-      });
-
-      // Ocultar el indicador de carga después de un breve tiempo (puedes ajustar según tus necesidades)
-      Future.delayed(const Duration(milliseconds: 100), () {
-        setState(() {
-          isLoading = false;
-        });
-      });
-
-    });
-    
+    _pageController = PageController(); // Inicializar el controlador de la página   
   }
   Future<void> _getUniqueId() async {
     try {
@@ -85,7 +73,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   }
   @override
   void dispose() {
-    _pageController.dispose(); // Liberar recursos del controlador de la página
+    //_pageController.dispose(); // Liberar recursos del controlador de la página
     super.dispose();
   }
 
@@ -114,6 +102,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
               color: Theme.of(context).hoverColor,
               child: PageView.builder(
                 controller: _pageController, // Usar el controlador de la página
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: questionProvider.questions.length,
                 itemBuilder: (context, index) {
                   final quizItems = questionProvider.questions[index];
@@ -132,6 +121,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   Widget _buildQuestionSlide(List<Map<String, dynamic>> quizItems) {
   
     return Padding(
+      key: ValueKey<int>(quizItems[0]['FK_BCP_id']),
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: Column(
@@ -160,6 +150,12 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
             Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
+                style: const TextStyle(fontSize: 12),
+                textAlign: TextAlign.left),
+            Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
+                style: const TextStyle(fontSize: 12),
+                textAlign: TextAlign.left),
+            Text('FK_BCP_id: ${quizItems[0]['FK_BCP_id']}' ,
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
             Text('Respuetas: ${quizItems[0]['RES_respuesta']}' ,
@@ -203,7 +199,12 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
                 child: const Text("<"),
               ),
               ElevatedButton(
@@ -215,7 +216,12 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                 child: const Text("Elim RESP"),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
                 child: const Text(">"),
               ),
             ],

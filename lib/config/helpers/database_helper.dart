@@ -69,7 +69,8 @@ class DatabaseHelper {
       BCP_complemento TEXT,
       CAT_subcategoria TEXT,
       CAT_categoria TEXT,
-      FRM_titulo TEXT
+      FRM_titulo TEXT,
+      RBF_salto_FK_BCP_id TEXT
     )''');
     await db.execute('''CREATE TABLE agrupador_formularios (
       AGF_id INTEGER PRIMARY KEY,
@@ -114,18 +115,6 @@ class DatabaseHelper {
     // }
     return result;
   }
-
-  // Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
-  //   List<Map<String, dynamic>> questionarieWithAnswers = await getQuestionarieWithAnswers(frmId);
-
-  //   return List.generate(questionarieWithAnswers.length, (i) {
-  //     return QuestionnarieModel.fromMap(questionarieWithAnswers[i]);
-  //   });
-  // }
-  //Busca las PREGUNTAS Y RESPUESTAS relacionadas al formulario seleccionado
-  
- 
-
   // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
   Future<int> createNewCopyForm(int frmId, BuildContext context) async {
   Database? db = await database;
