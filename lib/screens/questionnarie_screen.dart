@@ -33,7 +33,6 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
   late PageController _pageController; // Agrega el controlador de la página
   bool isLoading = false; // Variable para controlar la visibilidad del indicador de carga
-  // Map<int, Key> pageKeysMap = {};
 
   @override
   void initState() {
@@ -50,11 +49,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
     // Obtener el Android ID y asignarlo a IdUnico
     _getUniqueId();
-    // Antes de construir el PageView.builder
-    // for (final quizItems in questionProvider.questions) {
-    //   final bcpId = quizItems[0]['FK_BCP_id'];
-    //   pageKeysMap[bcpId] = GlobalKey();
-    // }
+    
     
     questionProvider.loadFormsQuestionnarie(frmIdController, fkAgfIdController);
     _pageController = PageController(); // Inicializar el controlador de la página   
@@ -160,9 +155,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             Text('Respuetas: ${quizItems[0]['RES_respuesta']}' ,
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
-            // Convertir la cadena JSON en un mapa de Dart
             responseTypeEvaluation(quizItems, uniqueId),
-            // RadioOptionsWidget(options: json.decode(quizItems[0]['bcpOpciones'] ?? '')),
           ],
         ),
       ),
@@ -252,14 +245,10 @@ Widget responseTypeEvaluation(List<Map<String, dynamic>> quizItems, String uniqu
 //Se crean controles para checkList
 class CheckBoxesList extends StatefulWidget {
   final List<Map<String, dynamic>> quizItems;
-  // final int fkUserId;
-  // final int fkAgfId;
   final String uniqueId;
   const CheckBoxesList({
    Key? key,
     required this.quizItems,
-    // required this.fkUserId,
-    // required this.fkAgfId,
     required this.uniqueId,
   }) : super(key: key);
 
@@ -331,14 +320,10 @@ class CheckBoxesListState extends State<CheckBoxesList> {
 //Se crean controles radio buttons
 class RadioButtonsList extends StatefulWidget {
   final List<Map<String, dynamic>> quizItems;
-  // final int fkUserId;
-  // final int fkAgfId;
   final String uniqueId;
    const RadioButtonsList({
     Key? key,
     required this.quizItems,
-    // required this.fkUserId,
-    // required this.fkAgfId,
     required this.uniqueId,
   }) : super(key: key);
 
@@ -444,7 +429,6 @@ class LongAnswerBoxState extends State<AnswerBox> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // if( widget.quizItems[0]['BCP_tipoRespuesta'] == 'Respuesta larga' )
           const SizedBox(height: 3),
           TextField(
             controller: textController,
