@@ -81,6 +81,7 @@ class DatabaseHelper {
     await db.execute('''CREATE TABLE respuestas (
       id INTEGER PRIMARY KEY,
       RES_respuesta TEXT,
+      RES_complemento TEXT,
       FK_RBF_id INTEGER,
       FK_AGF_id INTEGER,
       USER_id INTEGER,
@@ -103,7 +104,7 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getQuestionarie(int frmId, int agfId) async {
     Database? db = await database;
     List<Map<String, dynamic>> result = await db!.rawQuery('''
-      SELECT c.*, r.RES_respuesta, af.AGF_id, af.FK_USER_id, af.AGF_copia
+      SELECT c.*, r.RES_respuesta, r.RES_complemento, r.id, af.AGF_id, af.FK_USER_id, af.AGF_copia
       FROM agrupador_formularios af
       JOIN cuestionario c ON af.FK_FRM_id = c.FK_FRM_id
       LEFT JOIN respuestas r ON c.RBF_id = r.FK_RBF_id AND r.FK_AGF_id = af.AGF_id
@@ -336,7 +337,9 @@ class DatabaseHelper {
     await db!.execute('delete from tipo_establecimientos');
     await db.execute('delete from establecimientos');
     await db.execute('delete from visitas_formularios');
+    await db.execute('delete from agrupador_formularios');
     await db.execute('delete from cuestionario');
+    await db.execute('delete from respuestas');
     print('Datos eliminados');
   }
 

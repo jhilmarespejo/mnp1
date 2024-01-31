@@ -1,6 +1,7 @@
 class AnswersModel {
   final int? id;
-  final dynamic resRespuesta; 
+  late final dynamic resRespuesta; 
+  final dynamic resComplemento; 
   final int fkRbfId;
   final int fkAgfId;
   final int userId;
@@ -9,7 +10,8 @@ class AnswersModel {
   // CONSTRUCTOR
   AnswersModel({
     this.id,
-     this.resRespuesta,
+    this.resRespuesta,
+    this.resComplemento,
     required this.fkRbfId,
     required this.fkAgfId,
     required this.userId,
@@ -20,6 +22,7 @@ class AnswersModel {
     return AnswersModel(
       id: map['id'],
       resRespuesta: map['RES_respuesta'],
+      resComplemento: map['RES_complemento'],
       fkRbfId: map['FK_RBF_id'],
       fkAgfId: map['FK_AGF_id'],
       userId: map['USER_id'],
@@ -31,6 +34,7 @@ class AnswersModel {
     return {
       'id': id,
       'RES_respuesta': resRespuesta,
+      'RES_complemento': resComplemento,
       'FK_RBF_id': fkRbfId,
       'FK_AGF_id': fkAgfId,
       'USER_id': userId,

@@ -6,6 +6,10 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
+late TextEditingController responsesController;
+late List<Map<String, dynamic>> responsePerPage;
+late List<AnswersModel> answer;
+
 class QuestionnarieScreen extends StatefulWidget {
   final VisitFormsModel form;
   final FormGrouperModel listF;
@@ -33,6 +37,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
   late PageController _pageController; // Agrega el controlador de la página
   bool isLoading = false; // Variable para controlar la visibilidad del indicador de carga
+  //*************
 
   @override
   void initState() {
@@ -52,7 +57,10 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     
     
     questionProvider.loadFormsQuestionnarie(frmIdController, fkAgfIdController);
-    _pageController = PageController(); // Inicializar el controlador de la página   
+    _pageController = PageController(); // Inicializar el controlador de la página  
+    responsesController = TextEditingController(); 
+    responsePerPage = [];
+    answer = []; 
   }
   Future<void> _getUniqueId() async {
     try {
@@ -146,9 +154,6 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
-            Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
             Text('FK_BCP_id: ${quizItems[0]['FK_BCP_id']}' ,
                 style: const TextStyle(fontSize: 12),
                 textAlign: TextAlign.left),
@@ -209,6 +214,13 @@ class _FormScreenState extends State<QuestionnarieScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  if(responsesController.text != '' && responsePerPage[0]['RES_respuesta'] == null ) {
+                    responsePerPage[0]['RES_respuesta'] = responsesController.text; // Agrega el valor del controlador de texto
+                  } 
+                  saveSelectedAnswerToDatabase(context, responsePerPage);
+                  
+                  responsesController.clear();
+                  answer.clear();
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
@@ -218,7 +230,6 @@ class _FormScreenState extends State<QuestionnarieScreen> {
               ),
             ],
           ),
-          
         ],
       ),
     );
@@ -228,7 +239,8 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
 
 // ****************************************************************************************************
-
+// ****************************************************************************************************
+// ****************************************************************************************************
 Widget responseTypeEvaluation(List<Map<String, dynamic>> quizItems, String uniqueId) {
   if( quizItems[0]['BCP_tipoRespuesta'] == 'Lista desplegable' || quizItems[0]['BCP_tipoRespuesta'] == 'Afirmación' ){
     return RadioButtonsList( quizItems:quizItems, uniqueId:uniqueId );
@@ -258,8 +270,6 @@ class CheckBoxesList extends StatefulWidget {
 
 class CheckBoxesListState extends State<CheckBoxesList> {
   List<String> selectedValues = [];
-
-
     @override
     void initState() {
       super.initState();
@@ -275,7 +285,6 @@ class CheckBoxesListState extends State<CheckBoxesList> {
   Widget build(BuildContext context) {
     List<Widget> checkBoxListTiles = [];
     Map<String, dynamic>? opciones = json.decode(widget.quizItems[0]['BCP_opciones'] ?? '{}');
-
     opciones?.forEach((key, value) {
       checkBoxListTiles.add(
         CheckboxListTile(
@@ -289,16 +298,26 @@ class CheckBoxesListState extends State<CheckBoxesList> {
               } else {
                 selectedValues.remove(value);
               }
-              if (selectedValues.isEmpty) {
-                saveSelectedAnswerToDatabase( context, null, widget);
-              } else {
-                saveSelectedAnswerToDatabase( context, jsonEncode(selectedValues), widget);
-              }
+              // answer = [AnswersModel(
+              //   resRespuesta: selectedValues.isEmpty? null : jsonEncode(selectedValues),
+              //   fkRbfId: widget.quizItems[0]['RBF_id'],
+              //   fkAgfId: widget.quizItems[0]['AGF_id'],
+              //   userId: widget.quizItems[0]['FK_USER_id'],
+              //   deviceId: widget.uniqueId
+              // )];
+              responsePerPage = [{
+                'RBF_id': widget.quizItems[0]['RBF_id'],
+                'AGF_id': widget.quizItems[0]['AGF_id'],
+                'USER_id':  widget.quizItems[0]['FK_USER_id'],
+                'RES_device_id': widget.uniqueId,
+                'RES_respuesta': selectedValues.isEmpty? null : jsonEncode(selectedValues), // Agrega el valor del controlador de texto
+              }];
             });
           },
         ),
       );
     });
+    
     return SingleChildScrollView(
       child: Column(
         children: checkBoxListTiles,
@@ -333,7 +352,7 @@ class RadioButtonsList extends StatefulWidget {
 
 class RadioButtonsListState extends State<RadioButtonsList> {
   String? selectedValue;
-  
+    
   @override
   void initState() {
     super.initState();
@@ -347,6 +366,7 @@ class RadioButtonsListState extends State<RadioButtonsList> {
   
   @override
   Widget build(BuildContext context) {
+    
     List<Widget> radioListTiles = [];
     Map<String, dynamic>? opciones = json.decode(widget.quizItems[0]['BCP_opciones'] ?? '{}');
     opciones?.forEach((key, value) {
@@ -358,12 +378,26 @@ class RadioButtonsListState extends State<RadioButtonsList> {
           onChanged: (String? newValue) {
             setState(() {
               selectedValue = newValue;
-              saveSelectedAnswerToDatabase( context, value, widget);
             });
           },
         ),
       );
     });
+    
+    // answer = [AnswersModel(
+    //   resRespuesta: selectedValue,
+    //   fkRbfId: widget.quizItems[0]['RBF_id'],
+    //   fkAgfId: widget.quizItems[0]['AGF_id'],
+    //   userId: widget.quizItems[0]['FK_USER_id'],
+    //   deviceId: widget.uniqueId
+    // )];
+    responsePerPage = [{
+      'RBF_id': widget.quizItems[0]['RBF_id'],
+      'AGF_id': widget.quizItems[0]['AGF_id'],
+      'USER_id':  widget.quizItems[0]['FK_USER_id'],
+      'RES_device_id': widget.uniqueId,
+      'RES_respuesta': selectedValue, // Agrega el valor del controlador de texto
+    }];
     // print(selectedValue);
     return SingleChildScrollView(
       child: Column(
@@ -380,25 +414,26 @@ class RadioButtonsListState extends State<RadioButtonsList> {
 }
 
 //Guarda o actualiza los datos en la base 
-void saveSelectedAnswerToDatabase(BuildContext context, dynamic selectedAnswer, dynamic widget) async {
+void saveSelectedAnswerToDatabase(BuildContext context, List<Map<String, dynamic>> responsePerPage) async {
+  
+  print(responsePerPage[0]['RBF_id']);
+  print(responsePerPage[0]['RES_respuesta']);
   DatabaseProvider databaseProvider =
       Provider.of<DatabaseProvider>(context, listen: false);
-  AnswersModel answer = AnswersModel(
-    resRespuesta: selectedAnswer,
-    fkRbfId: widget.quizItems[0]['RBF_id'],
-    fkAgfId: widget.quizItems[0]['AGF_id'],
-    userId: widget.quizItems[0]['FK_USER_id'],
-    // fkAgfId: widget.fkAgfId,
-    // userId: widget.fkUserId,
-     deviceId: widget.uniqueId
-  );
+  // AnswersModel answer = AnswersModel(
+  //   resRespuesta: selectedAnswer,
+  //   fkRbfId: widget.quizItems[0]['RBF_id'],
+  //   fkAgfId: widget.quizItems[0]['AGF_id'],
+  //   userId: widget.quizItems[0]['FK_USER_id'],
+  //   deviceId: widget.uniqueId
+  // );
 
-  dynamic existingAnswer = await databaseProvider.checkExistingAnswer(answer.fkRbfId, answer.fkAgfId);
-  if(existingAnswer is List && existingAnswer.isEmpty){
-    await databaseProvider.putNewAnswer(answer);
-  }  else {
-    await databaseProvider.updateAnswer(answer.resRespuesta, answer.fkRbfId, answer.fkAgfId);
-  }
+  // dynamic existingAnswer = await databaseProvider.checkExistingAnswer(answer.fkRbfId, answer.fkAgfId);
+  // if(existingAnswer is List && existingAnswer.isEmpty){
+  //   await databaseProvider.putNewAnswer(answer);
+  // }  else {
+  //   await databaseProvider.updateAnswer(answer.resRespuesta, answer.fkRbfId, answer.fkAgfId);
+  // }
 }
 
 
@@ -415,23 +450,39 @@ class AnswerBox extends StatefulWidget {
 }
 
 class LongAnswerBoxState extends State<AnswerBox> {
-  late TextEditingController textController;
+  
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
     // print(widget.quizItems[0]['BCP_tipoRespuesta']);
     final String responseType = widget.quizItems[0]['BCP_tipoRespuesta'];
+
+    // answer =[ AnswersModel(
+    //   resRespuesta:'',
+    //   fkRbfId: widget.quizItems[0]['RBF_id'],
+    //   fkAgfId: widget.quizItems[0]['AGF_id'],
+    //   userId: widget.quizItems[0]['FK_USER_id'],
+    //   deviceId: widget.uniqueId
+    // )];
+    responsePerPage = [{
+      'RBF_id': widget.quizItems[0]['RBF_id'],
+      'AGF_id': widget.quizItems[0]['AGF_id'],
+      'USER_id':  widget.quizItems[0]['FK_USER_id'],
+      'RES_device_id': widget.uniqueId,
+      'RES_respuesta': null, // Agrega el valor del controlador de texto
+    }];
+    
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
           const SizedBox(height: 3),
           TextField(
-            controller: textController,
+            controller: responsesController, 
             maxLines: responseType == 'Respuesta larga'? 2: 1,
             inputFormatters: responseType == 'Numeral'? [FilteringTextInputFormatter.digitsOnly] : null,
              keyboardType: responseType == 'Numeral'? TextInputType.number : null, // Define el tipo de teclado
@@ -441,12 +492,12 @@ class LongAnswerBoxState extends State<AnswerBox> {
             ),
           ),
       ],
+      
     );
   }
 
   @override
   void dispose() {
-    textController.dispose();
     super.dispose();
   }
 }
