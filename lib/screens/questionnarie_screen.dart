@@ -57,6 +57,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     questionProvider.loadFormsQuestionnarie(frmIdController, fkAgfIdController);
     _pageController = PageController(); // Inicializar el controlador de la página  
     responsesController = TextEditingController(); 
+    complementController = TextEditingController(); 
     responsePerPage = [];
   }
   Future<void> _getUniqueId() async {
@@ -214,9 +215,15 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                   if(responsesController.text != '' && responsePerPage[0]['RES_respuesta'] == null ) {
                     responsePerPage[0]['RES_respuesta'] = responsesController.text; // Agrega el valor del controlador de texto
                   } 
+
+                  if( complementController.text !='' ){
+                    responsePerPage[0]['RES_complemento'] = complementController.text;
+                  }
+
                   saveSelectedAnswerToDatabase(context, responsePerPage);
                   
                   responsesController.clear();
+                  complementController.clear();
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
@@ -246,7 +253,7 @@ void _viewAnswers() async {
     DatabaseHelper dbHelper = DatabaseHelper();
     List<AnswersModel> resultados = await dbHelper.getAnswers();
     for (var resultado in resultados) {
-      print('Respuesta: ${resultado.resRespuesta},FK_RBF_id: ${resultado.fkRbfId},FK_AGF_id: ${resultado.fkAgfId}, USER_id: ${resultado.userId} ');
+      print('Respuesta: ${resultado.resRespuesta},FK_RBF_id: ${resultado.fkRbfId},FK_AGF_id: ${resultado.fkAgfId}, USER_id: ${resultado.userId},  RES_complemento: ${resultado.resComplemento} ');
     }
 }
 void _queryDelR() async {

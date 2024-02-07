@@ -33,7 +33,7 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
     super.initState();
 
     animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
     animation =
         CurvedAnimation(parent: animationController, curve: Curves.easeOut);
 
@@ -53,28 +53,40 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Padding(
-                  padding: const EdgeInsets.only(bottom: 30.0),
-                  child: Image.asset(
-                    'assets/escudo.png',
-                    height: 60.0,
-                    fit: BoxFit.scaleDown,
-                  ))
-            ],
-          ),
+          // Column(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: <Widget>[
+          //     Padding(
+          //         padding: const EdgeInsets.only(bottom: 30.0),
+          //         child: Image.asset(
+          //           'assets/escudo.png',
+          //           height: 60.0,
+          //           fit: BoxFit.scaleDown,
+          //         ))
+          //   ],
+          // ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image.asset(
-                'assets/logo-defensor.png',
-                width: animation.value * 250,
-                height: animation.value * 250,
+                'assets/logo-dp-mnp.png',
+                width: 250,
+                // height:  350,
               ),
             ],
+          ),
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_circle_right_outlined),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const SyncScreen())
+                );
+              },
+            ),
           ),
         ],
       ),
