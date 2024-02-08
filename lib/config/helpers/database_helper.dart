@@ -217,7 +217,7 @@ class DatabaseHelper {
   Future<void> loadFromApiAndSave() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    print(token);
+    deleteData();
     final response = await get(
       Uri.parse(
         'https://test-mnp.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
@@ -339,7 +339,7 @@ class DatabaseHelper {
     await db.execute('delete from visitas_formularios');
     await db.execute('delete from agrupador_formularios');
     await db.execute('delete from cuestionario');
-    await db.execute('delete from respuestas');
+    // await db.execute('delete from respuestas');
     print('Datos eliminados');
   }
 

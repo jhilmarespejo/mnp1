@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
-class SyncScreen extends StatelessWidget {
-  const SyncScreen({super.key});
+class SyncScreenTest extends StatelessWidget {
+  const SyncScreenTest({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mnp1/screens/sync_screen.dart';
+import 'package:mnp1/screens/sync_screen_test.dart';
+import 'package:mnp1/screens/login_screen.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -29,7 +31,9 @@ class _SplashState extends State<Splash> {
 
   void navigationPage() {
     Navigator.of(context).pushReplacement(
+      // MaterialPageRoute(builder: (context) => const LoginScreen()),
       MaterialPageRoute(builder: (context) => const SyncScreen()),
+      // MaterialPageRoute(builder: (context) => const SyncScreenTest()),
     );
   }
 

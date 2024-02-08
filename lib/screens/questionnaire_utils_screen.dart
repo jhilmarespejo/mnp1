@@ -42,6 +42,7 @@ class CheckBoxesList extends StatefulWidget {
 
 class CheckBoxesListState extends State<CheckBoxesList> {
   List<String> selectedValues = [];
+  // String? complementaryAnswer;
     @override
     void initState() {
       super.initState();
@@ -50,6 +51,11 @@ class CheckBoxesListState extends State<CheckBoxesList> {
       if (storedAnswers != null && storedAnswers.isNotEmpty) {
         List<String> storedValues = json.decode(storedAnswers).cast<String>();
         selectedValues.addAll(storedValues);
+      }
+      String? storedComplementaryAnswer = widget.quizItems[0]['RES_complemento'];
+      if (storedComplementaryAnswer != null && storedComplementaryAnswer.isNotEmpty) {
+        complementController.text = storedComplementaryAnswer;
+        //selectedValues.addAll(storedValues);
       }
     }
 
@@ -143,6 +149,12 @@ class RadioButtonsListState extends State<RadioButtonsList> {
     if (storedAnswer != null && storedAnswer.isNotEmpty) {
       selectedValue = storedAnswer;
     }
+
+    String? storedComplementaryAnswer = widget.quizItems[0]['RES_complemento'];
+    if (storedComplementaryAnswer != null && storedComplementaryAnswer.isNotEmpty) {
+      complementController.text = storedComplementaryAnswer;
+    }
+
   }
   
   @override
@@ -166,18 +178,18 @@ class RadioButtonsListState extends State<RadioButtonsList> {
     });
     if (widget.quizItems[0]['BCP_complemento'] != null &&
       widget.quizItems[0]['BCP_complemento'].isNotEmpty) {
-    // Si hay contenido en BCP_complemento, agrega un TextField
-    radioListTiles.add(
-      TextField(
-        controller: complementController, 
-        maxLines: 1,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          hintText: widget.quizItems[0]['BCP_complemento'],
+      // Si hay contenido en BCP_complemento, agrega un TextField
+      radioListTiles.add(
+        TextField(
+          controller: complementController, 
+          maxLines: 1,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            hintText: widget.quizItems[0]['BCP_complemento'],
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
     
     responsePerPage = [{
       'RBF_id': widget.quizItems[0]['RBF_id'],
@@ -193,6 +205,7 @@ class RadioButtonsListState extends State<RadioButtonsList> {
         children: radioListTiles,
       ),
     );
+
   }
   
   void updateSelectedValue(String value) {

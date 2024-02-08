@@ -31,6 +31,7 @@ class LoginScreenState extends State<LoginScreen> {
         // print(responseData);
 
         if (responseData['success'] == true) {
+          FocusScope.of(context).unfocus();
          // Almacenar token y userId en SharedPreferences
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString('token', responseData['token']);
@@ -43,7 +44,7 @@ class LoginScreenState extends State<LoginScreen> {
         );
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Validación exitosa.'),
+              content: Text('Validación exitosa!.'),
             ),
           );
         } else {

@@ -57,7 +57,8 @@ class ListFormsScreen extends StatefulWidget {
             Card(
               margin: const EdgeInsets.all(16.0),
               child: ListTile(
-                title: Text('${frmTituloController.text} -- $frmIdController'),
+                title: Text('${frmTituloController.text} '),
+                // title: Text('${frmTituloController.text} -- $frmIdController'),
                 trailing: const Icon(Icons.add, size: 45.0),
                 onTap: () {
                   _createNewCopyForm(frmIdController, context);
@@ -117,12 +118,13 @@ class ListFormsScreen extends StatefulWidget {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
                                             children: [
+                                              Text('(${listF.agfId.toString()})'),
                                               Text(
                                                 frmTituloController.text.length > 30
                                                     ? '${frmTituloController.text.substring(0, 30)}...'
                                                     : frmTituloController.text,
                                               ),
-                                              Text('AGF_id: ${listF.agfId.toString()}'),
+                                              // Text('AGF_id: ${listF.agfId.toString()}'),
                                             ],
                                           ),
                                         ),

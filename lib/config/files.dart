@@ -1,3 +1,5 @@
+export 'package:mnp1/screens/sync_screen_test.dart';
+
 export 'package:mnp1/screens/questionnaire_utils_screen.dart';
 export 'package:shared_preferences/shared_preferences.dart';
 

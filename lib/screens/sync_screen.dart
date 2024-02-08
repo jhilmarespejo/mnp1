@@ -11,7 +11,9 @@ class SyncScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Sincronización de datos'),
       ),
-      body: const _ButtonsView(),
+      body: const Center (
+        child: _ButtonsView(),
+      ),
     );
   }
 }
@@ -28,7 +30,6 @@ class _ButtonsViewState extends State<_ButtonsView> {
 
   final tipoEst = DatabaseHelper();
   // final establecimientos = EstablishmentsHelper();
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -36,30 +37,50 @@ class _ButtonsViewState extends State<_ButtonsView> {
       child: SizedBox(
         width: double.infinity,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // Centra verticalmente
+          // crossAxisAlignment: CrossAxisAlignment.center, // Centra horizontalmente
           children: [
-            FilledButton.icon(
-              icon: const Icon(Icons.cloud_sync_outlined),
-              label: const Text('Sincronizar datos'),
-              onPressed: () {
-                _loaddata();
-              },
-            ),
-            
-            FilledButton.icon(
-              icon: const Icon(Icons.start_outlined),
-              label: const Text('Iniciar'),
-              onPressed: () {
-                _navigateTipoEstablecimientos(context);
-              },
-            ),       
+            if (isLoading)
+              Column(
+                children: [
+                  Image.asset('assets/loading.gif', width: 250, ),
+                  const SizedBox( height: 0, ),
+                  const Text( 'Descargando datos...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ) 
+                ],
+              )
+              // const CircularProgressIndicator()
+            else 
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center, // Ajusta según sea necesario
+                // crossAxisAlignment: CrossAxisAlignment.center, // Centra horizontalmente
+                children: [
+                  FilledButton.icon(
+                    icon: const Icon(Icons.cloud_sync_outlined),
+                    label: const Text('Sincronizar datos'),
+                    onPressed: () {
+                      _loadData();
+                    },
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  FilledButton.icon(
+                    icon: const Icon(Icons.start_outlined),
+                    label: const Text('Iniciar'),
+                    onPressed: () {
+                      _navigateTipoEstablecimientos(context);
+                    },
+                  ),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
-  
-  
 
+  
   void _navigateTipoEstablecimientos(BuildContext context) async {
     await Navigator.push(
       context,
@@ -67,8 +88,27 @@ class _ButtonsViewState extends State<_ButtonsView> {
     );
   }
 
-  void _loaddata() async {
+  void _loadData() async {
+    setState(() {
+      isLoading = true; // Inicia la animación de carga
+    });
+
     await tipoEst.loadFromApiAndSave();
-    //await establecimientos.loadFromApiAndSaveEstablishments();
+
+    setState(() {
+      isLoading = false; // Detiene la animación de carga cuando el proceso ha terminado
+    });
   }
+
+  // void _navigateTipoEstablecimientos(BuildContext context) async {
+  //   await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => const EstablishmentTypesScreen()),
+  //   );
+  // }
+
+  // void _loaddata() async {
+  //   await tipoEst.loadFromApiAndSave();
+  //   //await establecimientos.loadFromApiAndSaveEstablishments();
+  // }
 }
