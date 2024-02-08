@@ -18,7 +18,7 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
   late Animation<double> animation;
 
   startTime() async {
-    var duration = const Duration(seconds: 2);
+    var duration = const Duration(seconds:3);
     return Timer(duration, navigationPage);
   }
 
@@ -33,17 +33,23 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
     super.initState();
 
     animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+        AnimationController(vsync: this, duration: const Duration(seconds: 3));
     animation =
         CurvedAnimation(parent: animationController, curve: Curves.easeOut);
 
     animation.addListener(() => setState(() {}));
     animationController.forward();
 
-    setState(() {
-      _visible = !_visible;
-    });
-    startTime();
+    // Precarga la imagen para evitar retrasos en la carga
+    precacheImage(AssetImage('assets/logo-dp-mnp.png'), context);
+    
+    // Navega a la siguiente pantalla después de un tiempo
+    Timer(const Duration(seconds: 3), navigationPage);
+
+    // setState(() {
+    //   _visible = !_visible;
+    // });
+    // startTime();
   }
 
   @override
@@ -72,7 +78,8 @@ class VideoState extends State<Splash> with SingleTickerProviderStateMixin {
               Image.asset(
                 'assets/logo-dp-mnp.png',
                 width: 250,
-                // height:  350,
+                // width: animation.value * 250,
+                // height: animation.value * 250,
               ),
             ],
           ),
