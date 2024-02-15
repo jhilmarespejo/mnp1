@@ -1,5 +1,6 @@
 import 'dart:convert';
 // import 'dart:html';
+import 'package:http/http.dart';
 import 'package:mnp1/config/files.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -73,11 +74,15 @@ class DatabaseHelper {
       RBF_salto_FK_BCP_id TEXT
     )''');
     await db.execute('''CREATE TABLE agrupador_formularios (
-      AGF_id INTEGER PRIMARY KEY,
+      AGF_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 3000,
       FK_FRM_id INTEGER,
       FK_USER_id INTEGER,
       AGF_copia INTEGER
       )''');
+
+      /** ARREGLAR ESTA PARTE para evitar la colision de AGF_id **/
+    await db.rawInsert('INSERT INTO agrupador_formularios (AGF_id, FK_FRM_id, FK_USER_id, AGF_copia) VALUES (?, ?, ?, ?)', [7000, null, null, null]);
+
     await db.execute('''CREATE TABLE respuestas (
       id INTEGER PRIMARY KEY,
       RES_respuesta TEXT,
@@ -116,37 +121,90 @@ class DatabaseHelper {
     // }
     return result;
   }
-  // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
-  Future<int> createNewCopyForm(int frmId, BuildContext context) async {
-  Database? db = await database;
-  int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  final int? userId = prefs.getInt('userId');
-  FormGrouperModel newCopyForm;
+  /* CARGA DE DATOS A LA BASE PRINCIPAL */
+  Future<void> uploadData() async {
+    Database? db = await database;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
 
-  if (userId != null) {
-    // Si userId no es nulo, continuar con el resto del código
-    newCopyForm = FormGrouperModel(
-      fkFrmId: frmId,
-      fkUserId: userId,
-      agfCopia: count + 1,
-    );
+    // List<Map<String, dynamic>> agf = await db!.query('agrupador_formularios');
+    List<Map<String, dynamic>> agf = await db!.query('agrupador_formularios');
+    List<Map<String, dynamic>> r = await db.query('respuestas', columns: ['RES_respuesta','RES_complemento','FK_RBF_id','FK_AGF_id','USER_id','RES_device_id']);
+    
+    // Convertir las listas a JSON
+    String agfJson = jsonEncode(agf);
+    String rJson = jsonEncode(r);
 
-    // Intentar insertar en la base de datos
-    return await db.insert('agrupador_formularios', newCopyForm.toMap());
-  } else {
-    // Si userId es nulo, redirigir al usuario a la pantalla de inicio de sesión
-    // ignore: use_build_context_synchronously
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
 
-    // Devolver un valor especial (puedes ajustar este valor según tus necesidades)
-    return 0;
+    // print(jsonEncode(<String, dynamic>{
+    //         'r': rJson,
+    //         'agf': agfJson,
+    //       }));
+    // URL del web service
+    String url = 'https://test-mnp.defensoria.gob.bo/api/api_guardar_respuestas';
+      
+    try {
+        // Realizar la solicitud POST con el token de autorización
+        final response = await post(
+          Uri.parse(url),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token', // Agregar el token aquí
+          },
+          body: jsonEncode(<String, dynamic>{
+            'agf': agfJson,
+            'r': rJson,
+          }));
+
+        // print(<String, dynamic>{
+        //   'agf': agfJson,
+        //   'r': rJson,
+        // });
+        
+        // Verificar el código de estado de la respuesta
+        if (response.statusCode == 200) {
+          print('Datos enviados exitosamente');
+        } else {
+          print('Error al enviar datos: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Error al enviar datos: $e');
+      }
   }
-}
+
+
+  // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
+  Future<int> createNewCopyForm( int frmId, BuildContext context ) async {
+    Database? db = await database;
+    int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('userId');
+    FormGrouperModel newCopyForm;
+
+    if (userId != null) {
+      // Si userId no es nulo, continuar con el resto del código
+      newCopyForm = FormGrouperModel(
+        fkFrmId: frmId,
+        fkUserId: userId,
+        agfCopia: count + 1,
+      );
+
+      // Intentar insertar en la base de datos
+      return await db.insert('agrupador_formularios', newCopyForm.toMap());
+    } else {
+      // Si userId es nulo, redirigir al usuario a la pantalla de inicio de sesión
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+
+      // Devolver un valor especial (puedes ajustar este valor según tus necesidades)
+      return 0;
+    }
+  }
 
 
   //Busca las preguntas relacionadas formularios seleccionado
@@ -212,7 +270,7 @@ class DatabaseHelper {
       return EstablishmentsModel.fromMap(q[i]);
     });
   }
-
+  
   // Busca informacion de las apis y la inserta en la base de datos local
   Future<void> loadFromApiAndSave() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

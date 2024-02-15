@@ -26,7 +26,8 @@ class _ButtonsView extends StatefulWidget {
 }
 
 class _ButtonsViewState extends State<_ButtonsView> {
-  bool isLoading = false;
+  bool isUpLoading = false;
+  bool isDownLoading = false;
 
   final tipoEst = DatabaseHelper();
   // final establecimientos = EstablishmentsHelper();
@@ -40,12 +41,22 @@ class _ButtonsViewState extends State<_ButtonsView> {
           mainAxisAlignment: MainAxisAlignment.center, // Centra verticalmente
           // crossAxisAlignment: CrossAxisAlignment.center, // Centra horizontalmente
           children: [
-            if (isLoading)
+            if ( isUpLoading )
               Column(
                 children: [
-                  Image.asset('assets/loading.gif', width: 250, ),
+                  Image.asset('assets/downloading.gif', width: 250, ),
                   const SizedBox( height: 0, ),
                   const Text( 'Descargando datos...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ) 
+                ],
+              ),
+              // const CircularProgressIndicator()
+            if ( isDownLoading )
+              Column(
+                children: [
+                  Image.asset('assets/uploading.gif', width: 250, ),
+                  const SizedBox( height: 0, ),
+                  const Text( 'Enviando respuestas...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ) 
                 ],
               )
@@ -56,8 +67,8 @@ class _ButtonsViewState extends State<_ButtonsView> {
                 // crossAxisAlignment: CrossAxisAlignment.center, // Centra horizontalmente
                 children: [
                   FilledButton.icon(
-                    icon: const Icon(Icons.cloud_sync_outlined),
-                    label: const Text('Sincronizar datos'),
+                    icon: const Icon(Icons.download),
+                    label: const Text('Descargar datos'),
                     onPressed: () {
                       _loadData();
                     },
@@ -70,6 +81,16 @@ class _ButtonsViewState extends State<_ButtonsView> {
                     label: const Text('Iniciar'),
                     onPressed: () {
                       _navigateTipoEstablecimientos(context);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  FilledButton.icon(
+                    icon: const Icon(Icons.upload_file),
+                    label: const Text('Enviar respuestas'),
+                    onPressed: () {
+                      _uploadData();
                     },
                   ),
                 ],
@@ -90,13 +111,24 @@ class _ButtonsViewState extends State<_ButtonsView> {
 
   void _loadData() async {
     setState(() {
-      isLoading = true; // Inicia la animación de carga
+      isUpLoading = true; // Inicia la animación de carga
     });
 
     await tipoEst.loadFromApiAndSave();
 
     setState(() {
-      isLoading = false; // Detiene la animación de carga cuando el proceso ha terminado
+      isUpLoading = false; // Detiene la animación de carga cuando el proceso ha terminado
+    });
+  }
+  void _uploadData() async {
+    setState(() {
+      isDownLoading = true; // Inicia la animación de carga
+    });
+
+    await tipoEst.uploadData();
+
+    setState(() {
+      isDownLoading = false; // Detiene la animación de carga cuando el proceso ha terminado
     });
   }
 

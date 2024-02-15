@@ -103,10 +103,14 @@ class _FormScreenState extends State<QuestionnarieScreen> {
               child: PageView.builder(
                 controller: _pageController, // Usar el controlador de la página
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: questionProvider.questions.length,
+                itemCount: questionProvider.questions.length+1,
                 itemBuilder: (context, index) {
-                  final quizItems = questionProvider.questions[index];
-                  return _buildQuestionSlide([quizItems]);
+                  if ( index < questionProvider.questions.length ) {
+                    final quizItems = questionProvider.questions[index];
+                    return _buildQuestionSlide([quizItems], index);
+                  } else {
+                    return _buildAdditionalPage();
+                  }
                 },
               ),
             ),
@@ -117,9 +121,20 @@ class _FormScreenState extends State<QuestionnarieScreen> {
       ),
     );
   }
-
-  Widget _buildQuestionSlide(List<Map<String, dynamic>> quizItems) {
-  
+  Widget _buildAdditionalPage() {
+    return Container(
+    // Aquí puedes construir la página adicional
+    alignment: Alignment.center,
+    child: FilledButton.icon(
+      icon: const Icon(Icons.arrow_back_ios),
+      label: const Text('Fin del cuestionario'),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    ),
+  );
+  }
+  Widget _buildQuestionSlide(List<Map<String, dynamic>> quizItems, int index) {
     return Padding(
       key: ValueKey<int>(quizItems[0]['FK_BCP_id']),
       padding: const EdgeInsets.all(16.0),
@@ -133,31 +148,31 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             const SizedBox(
               height: 5,
             ),
-            Text(quizItems[0]['BCP_pregunta'],
+            Text('${index+1}. ${quizItems[0]['BCP_pregunta']}',
                 style: const TextStyle(fontSize: 22),
                 textAlign: TextAlign.left),
             const SizedBox( height: 2,),
-            Text(quizItems[0]['BCP_tipoRespuesta'] ?? '---',
-                style: const TextStyle(fontSize: 15),
-                textAlign: TextAlign.left),
-            Text(quizItems[0]['BCP_opciones'] ?? 'sin opciones',
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
-            Text(quizItems[0]['BCP_complemento'] ?? 'sin complemento',
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
-            Text('KF_AGF_id: $fkAgfIdController' ,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
-            Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
-            Text('FK_BCP_id: ${quizItems[0]['FK_BCP_id']}' ,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
-            Text('Respuetas: ${quizItems[0]['RES_respuesta']}' ,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.left),
+            // Text(quizItems[0]['BCP_tipoRespuesta'] ?? '---',
+            //     style: const TextStyle(fontSize: 15),
+            //     textAlign: TextAlign.left),
+            // Text(quizItems[0]['BCP_opciones'] ?? 'sin opciones',
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
+            // Text(quizItems[0]['BCP_complemento'] ?? 'sin complemento',
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
+            // Text('KF_AGF_id: $fkAgfIdController' ,
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
+            // Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
+            // Text('FK_BCP_id: ${quizItems[0]['FK_BCP_id']}' ,
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
+            // Text('Respuetas: ${quizItems[0]['RES_respuesta']}' ,
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
             responseTypeEvaluation(quizItems, uniqueId),
           ],
         ),
@@ -176,7 +191,10 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             style: const TextStyle(fontSize: 15),
             textAlign: TextAlign.center,
           ),
-          // Mostrar el indicador de carga cuando isLoading es true
+          const SizedBox( height: 2,),
+          Text('($fkAgfIdController)',
+                style: const TextStyle(fontSize: 15),
+                textAlign: TextAlign.left),
          
         ],
       ),
