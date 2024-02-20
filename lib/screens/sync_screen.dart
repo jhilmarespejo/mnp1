@@ -46,12 +46,11 @@ class _ButtonsViewState extends State<_ButtonsView> {
                 children: [
                   Image.asset('assets/downloading.gif', width: 250, ),
                   const SizedBox( height: 0, ),
-                  const Text( 'Descargando datos...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  const Text( 'Sincronizando datos...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ) 
                 ],
-              ),
-              // const CircularProgressIndicator()
-            if ( isDownLoading )
+              )
+            else if ( isDownLoading )
               Column(
                 children: [
                   Image.asset('assets/uploading.gif', width: 250, ),
@@ -60,15 +59,14 @@ class _ButtonsViewState extends State<_ButtonsView> {
                   ) 
                 ],
               )
-              // const CircularProgressIndicator()
+
             else 
               Column(
-                mainAxisAlignment: MainAxisAlignment.center, // Ajusta según sea necesario
-                // crossAxisAlignment: CrossAxisAlignment.center, // Centra horizontalmente
+                mainAxisAlignment: MainAxisAlignment.center, 
                 children: [
                   FilledButton.icon(
                     icon: const Icon(Icons.download),
-                    label: const Text('Descargar datos'),
+                    label: const Text('Sincronizar datos'),
                     onPressed: () {
                       _loadData();
                     },
@@ -88,7 +86,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
                   ),
                   FilledButton.icon(
                     icon: const Icon(Icons.upload_file),
-                    label: const Text('Enviar respuestas'),
+                    label: const Text('Sincronizar respuestas'),
                     onPressed: () {
                       _uploadData();
                     },

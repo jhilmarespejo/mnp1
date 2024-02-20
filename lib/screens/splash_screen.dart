@@ -25,14 +25,14 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> loadImage() async {
-    // Simulating loading the image from the assets
+    // Carga de la imagen
     await Future.delayed(Duration(milliseconds: 500));
   }
 
   void navigationPage() {
     Navigator.of(context).pushReplacement(
-      // MaterialPageRoute(builder: (context) => const LoginScreen()),
-      MaterialPageRoute(builder: (context) => const SyncScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      //MaterialPageRoute(builder: (context) => const SyncScreen()),
       // MaterialPageRoute(builder: (context) => const SyncScreenTest()),
     );
   }

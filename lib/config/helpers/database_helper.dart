@@ -153,15 +153,10 @@ class DatabaseHelper {
             'Authorization': 'Bearer $token', // Agregar el token aquí
           },
           body: jsonEncode(<String, dynamic>{
-            'agf': agfJson,
-            'r': rJson,
+            'agrupador_formularios': agfJson,
+            'respuestas': rJson,
           }));
-
-        // print(<String, dynamic>{
-        //   'agf': agfJson,
-        //   'r': rJson,
-        // });
-        
+       
         // Verificar el código de estado de la respuesta
         if (response.statusCode == 200) {
           print('Datos enviados exitosamente');
