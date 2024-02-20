@@ -19,20 +19,20 @@ class _SplashState extends State<Splash> {
   }
 
   startTime() async {
-    await loadImage(); // Load the image synchronously
+    await loadImage(); 
     var duration = const Duration(seconds: 3);
     return Timer(duration, navigationPage);
   }
 
   Future<void> loadImage() async {
     // Carga de la imagen
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   void navigationPage() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-      //MaterialPageRoute(builder: (context) => const SyncScreen()),
+      //MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) => const SyncScreen()),
       // MaterialPageRoute(builder: (context) => const SyncScreenTest()),
     );
   }
