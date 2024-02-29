@@ -230,6 +230,7 @@ void saveSelectedAnswerToDatabase(BuildContext context, List<Map<String, dynamic
   );
   // print(answer);
 
+  // Se verifica si la respuesta ya existe, si es si, se actualiza la respuesta
   dynamic existingAnswer = await databaseProvider.checkExistingAnswer(answer.fkRbfId, answer.fkAgfId);
   if(existingAnswer is List && existingAnswer.isEmpty){
     await databaseProvider.putNewAnswer(answer);

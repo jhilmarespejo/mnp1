@@ -133,7 +133,6 @@ class _ButtonsViewState extends State<_ButtonsView> {
 
   void _loaddata() async {
     await tipoEst.loadFromApiAndSave();
-    //await establecimientos.loadFromApiAndSaveEstablishments();
   }
 
   void _getdata() async {
@@ -143,12 +142,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
   void _queryX() async {
     DatabaseHelper dbHelper = DatabaseHelper();
     List<AnswersModel> resultados = await dbHelper.getAnswers();
-    // String tesTipo = 'Centro Penitenciario';
-    // List<EstablishmentsModel> resultados = await dbHelper.queryx( tesTipo );
-    // for (var resultado in resultados) {
-    //   print(
-    //       'Tipo: ${resultado.tesTipo},nombre: ${resultado.estNombre},direccion: ${resultado.estDireccion} ');
-    // }
+    
   }
   void _deleteRespuestas() async {
     // DatabaseHelper dbHelper = DatabaseHelper();

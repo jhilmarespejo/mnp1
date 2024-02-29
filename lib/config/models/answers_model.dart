@@ -3,7 +3,7 @@ class AnswersModel {
   late final dynamic resRespuesta; 
   final dynamic resComplemento; 
   final int fkRbfId;
-  final int fkAgfId;
+  final String fkAgfId;
   final int userId;
   final String deviceId;
  

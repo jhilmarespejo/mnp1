@@ -2,15 +2,20 @@ import 'dart:convert';
 // import 'dart:html';
 import 'package:http/http.dart';
 import 'package:mnp1/config/files.dart';
+import 'package:mnp1/screens/questionnarie_screen.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:http/http.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart'; // Asegúrate de importar el paquete necesario
+import 'dart:math';
+// import 'package:http/http.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 
 class DatabaseHelper {
   Database? _database;
+  String uniqueId = "";
+  Random random = Random();
 
   Future<Database?> get database async {
     if (_database != null) return _database;
@@ -74,39 +79,27 @@ class DatabaseHelper {
       RBF_salto_FK_BCP_id TEXT
     )''');
     await db.execute('''CREATE TABLE agrupador_formularios (
-      AGF_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 3000,
+      AGF_id TEXT PRIMARY KEY,
       FK_FRM_id INTEGER,
       FK_USER_id INTEGER,
       AGF_copia INTEGER
       )''');
 
       /** ARREGLAR ESTA PARTE para evitar la colision de AGF_id **/
-    await db.rawInsert('INSERT INTO agrupador_formularios (AGF_id, FK_FRM_id, FK_USER_id, AGF_copia) VALUES (?, ?, ?, ?)', [7000, null, null, null]);
+    // await db.rawInsert('INSERT INTO agrupador_formularios (AGF_id, FK_FRM_id, FK_USER_id, AGF_copia) VALUES (?, ?, ?, ?)', [7000, null, null, null]);
 
     await db.execute('''CREATE TABLE respuestas (
       id INTEGER PRIMARY KEY,
       RES_respuesta TEXT,
       RES_complemento TEXT,
       FK_RBF_id INTEGER,
-      FK_AGF_id INTEGER,
+      FK_AGF_id TEXT,
       USER_id INTEGER,
       RES_device_id INTEGER
       )''');
   }
 
-  //Busca las PREGUNTAS Y RESPUESTAS relacionadas al formulario seleccionado
-  // Future<List<QuestionnarieModel>> getQuestionarie(int frmId) async {
-  //   Database? db = await database;
-  //   List<Map<String, dynamic>> questions = await db!.query('cuestionario',
-  //       where: 'FK_FRM_id = ?',
-  //       whereArgs: [frmId],
-  //       orderBy: 'RBF_id, RBF_orden');
-  //   return List.generate(questions.length, (i) {
-  //     return QuestionnarieModel.fromMap(questions[i]);
-  //   });
-  // }
-
-  Future<List<Map<String, dynamic>>> getQuestionarie(int frmId, int agfId) async {
+  Future<List<Map<String, dynamic>>> getQuestionarie(int frmId, String agfId) async {
     Database? db = await database;
     List<Map<String, dynamic>> result = await db!.rawQuery('''
       SELECT c.*, r.RES_respuesta, r.RES_complemento, r.id, af.AGF_id, af.FK_USER_id, af.AGF_copia
@@ -169,7 +162,7 @@ class DatabaseHelper {
   }
 
 
-  // Crea una nueva copia del formulario seleccionado xxx INSERTAR AQUI EL NUMERO USER_ID
+  // Crea una nueva copia del formulario seleccionado 
   Future<int> createNewCopyForm( int frmId, BuildContext context ) async {
     Database? db = await database;
     int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);
@@ -178,15 +171,21 @@ class DatabaseHelper {
     final int? userId = prefs.getInt('userId');
     FormGrouperModel newCopyForm;
 
+    // Se obtiene el ID del dispositivo
+    final String uniqueDevideId = await getUniqueId() as String;
+
     if (userId != null) {
       // Si userId no es nulo, continuar con el resto del código
       newCopyForm = FormGrouperModel(
+        // INSERTAR AQUI EL ID DEL DISPOSITIVO
+        agfId: '$uniqueDevideId-${count + 1}',
         fkFrmId: frmId,
         fkUserId: userId,
         agfCopia: count + 1,
       );
+      // print(newCopyForm.agfId);
 
-      // Intentar insertar en la base de datos
+      // Insertar en la base de datos
       return await db.insert('agrupador_formularios', newCopyForm.toMap());
     } else {
       // Si userId es nulo, redirigir al usuario a la pantalla de inicio de sesión
@@ -195,9 +194,17 @@ class DatabaseHelper {
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
       );
-
-      // Devolver un valor especial (puedes ajustar este valor según tus necesidades)
       return 0;
+    }
+  }
+
+  Future<String> getUniqueId() async {
+     try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return uniqueId = androidInfo.androidId;
+    } catch (e) {
+      return uniqueId = ( random.nextInt(9000) + 1000).toString();
     }
   }
 
@@ -424,7 +431,7 @@ class DatabaseHelper {
 
   
   // Verifica si la pregunta a insertar ya existe en la tabla respuestas de la BD local
-  Future<List<Map<String, dynamic>>> getExistingAnswer(int fkRbfId, int fkAgfId) async {
+  Future<List<Map<String, dynamic>>> getExistingAnswer(int fkRbfId, String fkAgfId) async {
     Database? db = await database;
      List<Map<String, dynamic>> checkAnswer = await db!.query('respuestas',
         where: 'FK_RBF_id = ? AND FK_AGF_id = ?',
@@ -439,7 +446,7 @@ class DatabaseHelper {
   }
 
   // Actualiza la respuesta actual por que ya existe su registro en la BD
-  updateActualAnswer( dynamic answer, int fkRbfId, int fkAgfId ) async {
+  updateActualAnswer( dynamic answer, int fkRbfId, String fkAgfId ) async {
     Database? db = await database;
     Map<String, dynamic> updateValues = {
       'RES_respuesta': answer,

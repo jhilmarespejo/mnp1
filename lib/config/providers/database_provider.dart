@@ -72,13 +72,14 @@ class DatabaseProvider with ChangeNotifier {
     return _listForms;
   }
 
+  
   Future<void> putNewCopyForm(int frmId, BuildContext context) async {
     await _databaseHelper.createNewCopyForm(frmId, context);
     await loadListForms(frmId);
     notifyListeners();
   }
 
-  Future<dynamic> loadFormsQuestionnarie(int frmId, int agfId) async {
+  Future<dynamic> loadFormsQuestionnarie(int frmId, String agfId) async {
     isLoading = true;
     _questions = await _databaseHelper.getQuestionarie(frmId, agfId);
     isLoading = false;
@@ -86,7 +87,7 @@ class DatabaseProvider with ChangeNotifier {
     return _questions;
   }
 
-  Future<dynamic> checkExistingAnswer( int fkRbfId,  int fkAgfId) async {
+  Future<dynamic> checkExistingAnswer( int fkRbfId,  String fkAgfId) async {
     try {
       isLoading = true;
       _checkAnswer = await _databaseHelper.getExistingAnswer(fkRbfId, fkAgfId);
@@ -111,7 +112,7 @@ class DatabaseProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateAnswer(dynamic answer, int fkRbfId, int fkAgfId) async {
+  Future<void> updateAnswer(dynamic answer, int fkRbfId, String fkAgfId) async {
     try {
       await _databaseHelper.updateActualAnswer(answer, fkRbfId, fkAgfId);
       notifyListeners();

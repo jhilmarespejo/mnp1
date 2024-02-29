@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mnp1/config/files.dart';
 import '../app_constants.dart';
+
+// import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
-import 'package:flutter/services.dart';
-// import 'dart:convert';
 
 
 
@@ -28,14 +28,14 @@ class _FormScreenState extends State<QuestionnarieScreen> {
   late TextEditingController frmTituloController = TextEditingController();
   late TextEditingController visTituloController = TextEditingController();
   late int fkUserIdController;
-  late int fkAgfIdController;
-  late String uniqueId=''; 
+  late String fkAgfIdController;
+  late String uniqueId='xxx'; 
 
   get radioListTiles => null;
 
   late PageController _pageController; // Agrega el controlador de la página
   bool isLoading = false; // Variable para controlar la visibilidad del indicador de carga
-  //*************
+
 
   @override
   void initState() {
@@ -53,24 +53,23 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     // Obtener el Android ID y asignarlo a IdUnico
     _getUniqueId();
     
-    
     questionProvider.loadFormsQuestionnarie(frmIdController, fkAgfIdController);
     _pageController = PageController(); // Inicializar el controlador de la página  
     responsesController = TextEditingController(); 
     complementController = TextEditingController(); 
     responsePerPage = [];
   }
-  Future<void> _getUniqueId() async {
-    try {
+
+    // final DatabaseHelper deviceId = DatabaseHelper();
+    // final uniqueId = deviceId.getUniqueId();
+
+
+ Future<String> _getUniqueId() async {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      setState(() {
-        uniqueId = androidInfo.androidId;
-      });
-    } catch (e) {
-      uniqueId = "alternative-unique-ID-$fkUserIdController";
-    }
+      return uniqueId = androidInfo.androidId;
   }
+  
   @override
   void dispose() {
     _pageController.dispose(); // Liberar recursos del controlador de la página
@@ -271,7 +270,7 @@ void _viewAnswers() async {
     DatabaseHelper dbHelper = DatabaseHelper();
     List<AnswersModel> resultados = await dbHelper.getAnswers();
     for (var resultado in resultados) {
-      print('Respuesta: ${resultado.resRespuesta},FK_RBF_id: ${resultado.fkRbfId},FK_AGF_id: ${resultado.fkAgfId}, USER_id: ${resultado.userId},  RES_complemento: ${resultado.resComplemento} ');
+      print('Respuesta: ${resultado.resRespuesta},FK_RBF_id: ${resultado.fkRbfId},FK_AGF_id: ${resultado.fkAgfId}, USER_id: ${resultado.userId},  RES_complemento: ${resultado.resComplemento},  RES_device_id: ${resultado.deviceId} ');
     }
 }
 void _queryDelR() async {

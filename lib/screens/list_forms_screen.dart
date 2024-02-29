@@ -57,8 +57,8 @@ class ListFormsScreen extends StatefulWidget {
             Card(
               margin: const EdgeInsets.all(16.0),
               child: ListTile(
+                // Titulo del formulario con el icono de +
                 title: Text('${frmTituloController.text} '),
-                // title: Text('${frmTituloController.text} -- $frmIdController'),
                 trailing: const Icon(Icons.add, size: 45.0),
                 onTap: () {
                   _createNewCopyForm(frmIdController, context);

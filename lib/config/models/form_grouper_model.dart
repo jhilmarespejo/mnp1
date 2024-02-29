@@ -1,5 +1,5 @@
 class FormGrouperModel {
-  final int? agfId;
+  final String? agfId;
   final int fkFrmId;
   final int fkUserId;
   final int agfCopia;
