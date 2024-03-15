@@ -68,7 +68,8 @@ class _ButtonsViewState extends State<_ButtonsView> {
                     icon: const Icon(Icons.download),
                     label: const Text('Sincronizar datos'),
                     onPressed: () {
-                      _loadData();
+                      _verifyUser(context);
+                      // _showConfirmationDialogDowload(context);
                     },
                   ),
                   const SizedBox(
@@ -88,14 +89,109 @@ class _ButtonsViewState extends State<_ButtonsView> {
                     icon: const Icon(Icons.upload_file),
                     label: const Text('Sincronizar respuestas'),
                     onPressed: () {
-                      _uploadData();
+                      _showConfirmationDialogUPload(context);
+                      // _uploadData();
                     },
                   ),
+                  // FilledButton.icon(
+                  //   icon: const Icon(Icons.abc_rounded),
+                  //   label: const Text('test screen'),
+                  //   onPressed: () {
+                  //     Navigator.pushReplacement(
+                  //       context,
+                  //       MaterialPageRoute(builder: (context) => const SyncScreenTest()),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
           ],
         ),
       ),
+    );
+  }
+
+  void _verifyUser(BuildContext context) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('userId');
+    if (userId != null) {
+      // ignore: use_build_context_synchronously
+      _showConfirmationDialogDowload(context);
+
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
+
+    // 
+
+  }
+  void _showConfirmationDialogDowload(BuildContext context) {
+    showDialog(
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: const Text('Confirmación'),
+      content: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Text('Los '),
+          // SizedBox(height: 8), // Espacio entre el texto "Atención" y el texto de la pregunta
+          Text('¿Está seguro de sincronizar los datos?'),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            _loadData();
+          },
+          child: Text('Sí'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('No'),
+        ),
+      ],
+    );
+  },
+);
+  }
+  void _showConfirmationDialogUPload(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+        title: Row(
+          children: [
+            const Text('Atención!'),
+            const Icon(Icons.warning, color: Colors.yellow), // Agregar un icono de advertencia
+          ],
+        ),
+        content: const Text('Asegúrese de que la información esté completa y sea confiable'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _uploadData();
+            },
+            child: const Text('Enviar información'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Retroceder'),
+          ),
+        ],
+      );
+      },
     );
   }
 

@@ -135,7 +135,7 @@ class DatabaseHelper {
     //         'agf': agfJson,
     //       }));
     // URL del web service
-    String url = 'https://test-mnp.defensoria.gob.bo/api/api_guardar_respuestas';
+    String url = 'https://mnp-bolivia.defensoria.gob.bo/api/api_guardar_respuestas';
       
     try {
         // Realizar la solicitud POST con el token de autorización
@@ -165,20 +165,20 @@ class DatabaseHelper {
   // Crea una nueva copia del formulario seleccionado 
   Future<int> createNewCopyForm( int frmId, BuildContext context ) async {
     Database? db = await database;
-    int count = await db!.query('agrupador_formularios', where: 'FK_FRM_id = ?', whereArgs: [frmId]).then((value) => value.length);
+    int count = await db!.query('agrupador_formularios').then((value) => value.length);
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final int? userId = prefs.getInt('userId');
     FormGrouperModel newCopyForm;
 
     // Se obtiene el ID del dispositivo
-    final String uniqueDevideId = await getUniqueId() as String;
+    // final String uniqueDevideId = await getUniqueId() as String;
 
     if (userId != null) {
       // Si userId no es nulo, continuar con el resto del código
       newCopyForm = FormGrouperModel(
         // INSERTAR AQUI EL ID DEL DISPOSITIVO
-        agfId: '$uniqueDevideId-${count + 1}',
+        agfId: '$userId-${count + 1}',
         fkFrmId: frmId,
         fkUserId: userId,
         agfCopia: count + 1,
@@ -280,24 +280,24 @@ class DatabaseHelper {
     deleteData();
     final response = await get(
       Uri.parse(
-        'https://test-mnp.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
+        'https://mnp-bolivia.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
         headers: {'Authorization': 'Bearer $token'},
     );
 
     final responseEstablishments = await get(
       Uri.parse(
-        'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
+        'https://mnp-bolivia.defensoria.gob.bo/api/api_lista_establecimientos'),
         headers: {'Authorization': 'Bearer $token'},
     );
 
     final responseVisitForms = await get(
       Uri.parse(
-        'https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
+        'https://mnp-bolivia.defensoria.gob.bo/api/api_visitas_formularios'),
         headers: {'Authorization': 'Bearer $token'},
     );
     final responseForm = await get(
       Uri.parse(
-        'https://test-mnp.defensoria.gob.bo/api/api_formularios_cuestionario'),
+        'https://mnp-bolivia.defensoria.gob.bo/api/api_formularios_cuestionario'),
         headers: {'Authorization': 'Bearer $token'},
     );
 

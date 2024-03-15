@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/config/files.dart';
+import 'package:mnp1/screens/sync_screen.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 class SyncScreenTest extends StatelessWidget {
@@ -41,7 +42,8 @@ class _ButtonsViewState extends State<_ButtonsView> {
               icon: const Icon(Icons.cloud_sync_outlined),
               label: const Text('Sincronizar datos'),
               onPressed: () {
-                _loaddata();
+                // _loaddata();
+                _verifyUser(context);
               },
             ),
             FilledButton.icon(
@@ -66,7 +68,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
               },
             ),
             const SizedBox(
-              height: 150,
+              height: 30,
             ),
             FilledButton.icon(
               icon: const Icon(Icons.start_outlined),
@@ -111,12 +113,33 @@ class _ButtonsViewState extends State<_ButtonsView> {
                 _deleteRespuestas();
               },
             ),
+            FilledButton.icon(
+                icon: const Icon(Icons.abc_rounded),
+                label: const Text('first screen'),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SyncScreen()),
+                  );
+                },
+              ),
           ],
         ),
       ),
     );
   }
   
+  void _verifyUser(BuildContext context) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('userId');
+    print(userId);
+
+
+    //_loaddata();
+    // _showConfirmationDialog(context);
+
+  }
+
   void _navigateLogin(BuildContext context) async {
     await Navigator.push(
       context,

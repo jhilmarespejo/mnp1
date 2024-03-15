@@ -22,7 +22,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_iniciar'),
+        Uri.parse('https://mnp-bolivia.defensoria.gob.bo/api/api_iniciar'),
         body: {'username': username, 'password': password},
       );
 
@@ -79,50 +79,52 @@ class LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text('Inicio de Sesión'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/logo-defensor.png',
-              height: 70,
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: 'Nombre de usuario',
-                hintText: 'Ingresa tu nombre de usuario',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/logo-defensor.png',
+                height: 70,
               ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Ingrese el password',
-                prefixIcon: const Icon(Icons.security),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  labelText: 'Nombre de usuario',
+                  hintText: 'Ingresa tu nombre de usuario',
+                  prefixIcon: const Icon(Icons.person),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
                 ),
-                filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Iniciar Sesión'),
-            )
-          ],
+              const SizedBox(height: 10),
+              TextField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  hintText: 'Ingrese el password',
+                  prefixIcon: const Icon(Icons.security),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _login,
+                child: const Text('Iniciar Sesión'),
+              )
+            ],
+          ),
         ),
       ),
     );

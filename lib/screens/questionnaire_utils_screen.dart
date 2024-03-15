@@ -31,7 +31,7 @@ class CheckBoxesList extends StatefulWidget {
   final List<Map<String, dynamic>> quizItems;
   final String uniqueId;
   const CheckBoxesList({
-   Key? key,
+  Key? key,
     required this.quizItems,
     required this.uniqueId,
   }) : super(key: key);
@@ -52,10 +52,10 @@ class CheckBoxesListState extends State<CheckBoxesList> {
         List<String> storedValues = json.decode(storedAnswers).cast<String>();
         selectedValues.addAll(storedValues);
       }
+      // Se obtiene la respuesta complementaria
       String? storedComplementaryAnswer = widget.quizItems[0]['RES_complemento'];
       if (storedComplementaryAnswer != null && storedComplementaryAnswer.isNotEmpty) {
         complementController.text = storedComplementaryAnswer;
-        //selectedValues.addAll(storedValues);
       }
     }
 
@@ -85,6 +85,8 @@ class CheckBoxesListState extends State<CheckBoxesList> {
                 'RES_device_id': widget.uniqueId,
                 'RES_respuesta': selectedValues.isEmpty? null : jsonEncode(selectedValues), // Agrega el valor del controlador de texto
                 'RES_complemento': null, // Agrega el valor del controlador de texto
+                'RBF_salto_FK_BCP_id': widget.quizItems[0]['RBF_salto_FK_BCP_id'],
+                'FK_BCP_id': widget.quizItems[0]['FK_BCP_id'],
               }];
             });
           },
@@ -106,7 +108,6 @@ class CheckBoxesListState extends State<CheckBoxesList> {
         ),
       );
     }
-    // responsePerPage[0]['RES_complemento'] = complementController.text;
     return SingleChildScrollView(
       child: Column(
         children: checkBoxListTiles,
@@ -129,14 +130,14 @@ class CheckBoxesListState extends State<CheckBoxesList> {
 class RadioButtonsList extends StatefulWidget {
   final List<Map<String, dynamic>> quizItems;
   final String uniqueId;
-   const RadioButtonsList({
+    const RadioButtonsList({
     Key? key,
     required this.quizItems,
     required this.uniqueId,
   }) : super(key: key);
 
   @override
- RadioButtonsListState createState() => RadioButtonsListState();
+  RadioButtonsListState createState() => RadioButtonsListState();
 }
 
 class RadioButtonsListState extends State<RadioButtonsList> {
@@ -198,8 +199,10 @@ class RadioButtonsListState extends State<RadioButtonsList> {
       'RES_device_id': widget.uniqueId,
       'RES_respuesta': selectedValue, // Agrega el valor del controlador de texto
       'RES_complemento':null,
+      'RBF_salto_FK_BCP_id': widget.quizItems[0]['RBF_salto_FK_BCP_id'],
+      'FK_BCP_id': widget.quizItems[0]['FK_BCP_id'],
     }];
-       
+      
     return SingleChildScrollView(
       child: Column(
         children: radioListTiles,
@@ -218,19 +221,18 @@ class RadioButtonsListState extends State<RadioButtonsList> {
 //Guarda o actualiza los datos en la base 
 void saveSelectedAnswerToDatabase(BuildContext context, List<Map<String, dynamic>> responsePerPage) async {
   DatabaseProvider databaseProvider =
-      Provider.of<DatabaseProvider>(context, listen: false);
-  // print(responsePerPage[0]);
+    Provider.of<DatabaseProvider>(context, listen: false);
   AnswersModel answer = AnswersModel(
     resRespuesta: responsePerPage[0]['RES_respuesta'],
     fkRbfId: responsePerPage[0]['RBF_id'],
     fkAgfId: responsePerPage[0]['AGF_id'],
     userId: responsePerPage[0]['FK_USER_id'],
     deviceId: responsePerPage[0]['RES_device_id'],
-    resComplemento: responsePerPage[0]['RES_complemento']
+    resComplemento: responsePerPage[0]['RES_complemento'],
+    
   );
-  // print(answer);
 
-  // Se verifica si la respuesta ya existe, si es si, se actualiza la respuesta
+  // Se verifica si la respuesta ya existe, si es asi, se actualiza la respuesta
   dynamic existingAnswer = await databaseProvider.checkExistingAnswer(answer.fkRbfId, answer.fkAgfId);
   if(existingAnswer is List && existingAnswer.isEmpty){
     await databaseProvider.putNewAnswer(answer);
@@ -239,7 +241,7 @@ void saveSelectedAnswerToDatabase(BuildContext context, List<Map<String, dynamic
   }
 }
 
-
+//  Respuestas de tipo texto
 class AnswerBox extends StatefulWidget {
   final List<Map<String, dynamic>> quizItems;
   final String uniqueId;
@@ -275,6 +277,8 @@ class LongAnswerBoxState extends State<AnswerBox> {
       'RES_device_id': widget.uniqueId,
       'RES_respuesta': null, // el valor se asigna despues
       'RES_complemento': null,
+      'RBF_salto_FK_BCP_id': widget.quizItems[0]['RBF_salto_FK_BCP_id'],
+      'FK_BCP_id': widget.quizItems[0]['FK_BCP_id'],
     }];
     
     return Column(

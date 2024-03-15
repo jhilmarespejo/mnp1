@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mnp1/config/files.dart';
@@ -64,7 +66,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     // final uniqueId = deviceId.getUniqueId();
 
 
- Future<String> _getUniqueId() async {
+  Future<String> _getUniqueId() async {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       return uniqueId = androidInfo.androidId;
@@ -82,13 +84,13 @@ class _FormScreenState extends State<QuestionnarieScreen> {
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(estNombreController.text),
-            const SizedBox(
-              height: 1,
-            ),
-            Text(visTipoController.text, style: const TextStyle(fontSize: 15)),
-          ],
+			children: [
+				Text(estNombreController.text),
+				const SizedBox(
+				height: 1,
+				),
+				Text(visTipoController.text, style: const TextStyle(fontSize: 15)),
+			],
         ),
         elevation: 10,
       ),
@@ -120,22 +122,13 @@ class _FormScreenState extends State<QuestionnarieScreen> {
       ),
     );
   }
-  Widget _buildAdditionalPage() {
-    return Container(
-    // Aquí puedes construir la página adicional
-    alignment: Alignment.center,
-    child: FilledButton.icon(
-      icon: const Icon(Icons.arrow_back_ios),
-      label: const Text('Fin del cuestionario'),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    ),
-  );
-  }
+  
   Widget _buildQuestionSlide(List<Map<String, dynamic>> quizItems, int index) {
-    return Padding(
-      key: ValueKey<int>(quizItems[0]['FK_BCP_id']),
+    // Obtener la clave del widget
+    final Key widgetKey = ValueKey<int>(quizItems[0]['FK_BCP_id']);
+    // print(widgetKey);
+    return Container(
+      key: widgetKey,
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: Column(
@@ -163,10 +156,16 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             // Text('KF_AGF_id: $fkAgfIdController' ,
             //     style: const TextStyle(fontSize: 12),
             //     textAlign: TextAlign.left),
+            // Text('KF_BCP_id: ${quizItems[0]['FK_BCP_id']}' ,
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
             // Text('KF_RBF_id: ${quizItems[0]['RBF_id']}' ,
             //     style: const TextStyle(fontSize: 12),
             //     textAlign: TextAlign.left),
-            // Text('FK_BCP_id: ${quizItems[0]['FK_BCP_id']}' ,
+            // Text('RBF_orden: ${quizItems[0]['RBF_orden']}' ,
+            //     style: const TextStyle(fontSize: 12),
+            //     textAlign: TextAlign.left),
+            // Text('SALTO: ${quizItems[0]['RBF_salto_FK_BCP_id']}' ,
             //     style: const TextStyle(fontSize: 12),
             //     textAlign: TextAlign.left),
             // Text('Respuetas: ${quizItems[0]['RES_respuesta']}' ,
@@ -179,6 +178,18 @@ class _FormScreenState extends State<QuestionnarieScreen> {
     );
   }
 
+	Widget _buildAdditionalPage() {
+		return Container(
+			alignment: Alignment.center,
+			child: FilledButton.icon(
+			icon: const Icon(Icons.arrow_back_ios),
+			label: const Text('Fin del cuestionario'),
+			onPressed: () {
+				Navigator.pop(context);
+			},
+			),
+		);
+	}
   Container header() {
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -194,7 +205,6 @@ class _FormScreenState extends State<QuestionnarieScreen> {
           Text('($fkAgfIdController)',
                 style: const TextStyle(fontSize: 15),
                 textAlign: TextAlign.left),
-         
         ],
       ),
     );
@@ -202,7 +212,7 @@ class _FormScreenState extends State<QuestionnarieScreen> {
 
   Container footer() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(1.0),
       width: double.infinity,
       child: Column(
         children: [
@@ -212,21 +222,23 @@ class _FormScreenState extends State<QuestionnarieScreen> {
             children: [
               ElevatedButton(
                 onPressed: () {
+                  FocusScope.of(context).unfocus();
                   _pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
                 },
-                child: const Text("<"),
+                // child: const Text("<"),
+                child: const Icon(Icons.arrow_back_ios),
               ),
-              ElevatedButton(
-                onPressed: () {_viewAnswers();},
-                child: const Text("RESP"),
-              ),
-              ElevatedButton(
-                onPressed: () {_queryDelR();},
-                child: const Text("Elim RESP"),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {_viewAnswers();},
+              //   child: const Text("RESP"),
+              // ),
+              // ElevatedButton(
+              //   onPressed: () {_queryDelR();},
+              //   child: const Text("Elim RESP"),
+              // ),
               ElevatedButton(
                 onPressed: () {
                   if(responsesController.text != '' && responsePerPage[0]['RES_respuesta'] == null ) {
@@ -241,17 +253,73 @@ class _FormScreenState extends State<QuestionnarieScreen> {
                   
                   responsesController.clear();
                   complementController.clear();
-                  _pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
+
+                  // print(responsePerPage[0]['RBF_salto_FK_BCP_id']);
+                  if(responsePerPage[0]['RBF_salto_FK_BCP_id'] != null ){
+                    //salto a otra pagina
+                    // print(responsePerPage[0]['RBF_salto_FK_BCP_id']);
+                    Map<String, dynamic> skip = jsonDecode(responsePerPage[0]['RBF_salto_FK_BCP_id']);
+                    var skipKeys = skip.keys.toList();
+                    var skipValues = skip.values.toList();
+
+                    for (int i = 0; i < skipKeys.length; i++) {
+                      var key = skipKeys[i];
+                      var pageId = skipValues[i];
+                      if (responsePerPage[0]['RES_respuesta'] == key) {
+                        // busca el índice que corresponde a la variable para hacer el salto
+                        final index =
+                            questionProvider.questions.indexWhere((item) => item['FK_BCP_id'] == int.parse(pageId));
+                        if (index != -1) {
+                          _pageController.jumpToPage(index);
+                          break;
+
+                        } else {
+                          print('index != -1');
+                          _gotoNextPage();
+                          break;
+                        }
+                      } //else {
+                      //   print('== key');
+                      //   _gotoNextPage();
+                      //   break;
+                      // }
+}
+                    // skip.forEach((key, pageId) {
+                    //   if(responsePerPage[0]['RES_respuesta'] == key){
+                    //     // busca el indice que corresponde a la variable para hacer el salto
+                    //     final index = questionProvider.questions.indexWhere((item) => item['FK_BCP_id'] == int.parse(pageId));
+                    //     if (index != -1) {
+                    //       _pageController.jumpToPage(index);
+                    //     } else {
+                    //       print('indez!=-1');
+                    //       _gotoNextPage();
+                          
+                    //     }
+                    //   } else {
+                    //     print('== key');
+                    //     _gotoNextPage();
+                    //   }
+                    // });
+                  } 
+                  else{
+                    _gotoNextPage();
+                  }
                 },
-                child: const Text(">"),
+                // child: const Text(">"),
+                child: const Icon(Icons.arrow_forward_ios),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+  //salto a la siguiente pagina
+  void _gotoNextPage(){
+    FocusScope.of(context).unfocus();
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mnp1/screens/questionnarie_screen.dart';
+import 'package:mnp1/screens/sync_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:mnp1/config/files.dart';
 import '../app_constants.dart';
@@ -38,38 +39,55 @@ class ListFormsScreen extends StatefulWidget {
       listFormProvider.loadListForms(frmIdController);
     }
 
+    
     @override
     Widget build(BuildContext context) {
       return Scaffold(
         appBar: AppBar(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(estNombreController.text),
-              const SizedBox(height: 1),
-              Text(visTipoController.text, style: const TextStyle(fontSize: 15)),
-            ],
-          ),
-          elevation: 10,
-        ),
-        body: Column(
+          title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Card(
-              margin: const EdgeInsets.all(16.0),
-              child: ListTile(
-                // Titulo del formulario con el icono de +
-                title: Text('${frmTituloController.text} '),
-                trailing: const Icon(Icons.add, size: 45.0),
-                onTap: () {
-                  _createNewCopyForm(frmIdController, context);
-                },
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(estNombreController.text),
+                  const SizedBox(height: 1),
+                  Text(visTipoController.text, style: const TextStyle(fontSize: 15)),
+                ],
               ),
             ),
-            _ListFormsWidget( frmTituloController: frmTituloController, form:widget.form ),
+            ElevatedButton( // Aquí está el botón
+              onPressed: () {
+                Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SyncScreen()),
+              );
+              },
+              child: const Icon(Icons.home), // Icono del botón (puedes personalizarlo)
+            ),
           ],
         ),
-      );
-    }
+      elevation: 10,
+    ),
+    body: Column(
+      children: [
+        Card(
+          margin: const EdgeInsets.all(16.0),
+          child: ListTile(
+            // Titulo del formulario con el icono de +
+            title: Text('${frmTituloController.text} '),
+            trailing: const Icon(Icons.add, size: 45.0),
+            onTap: () {
+              _createNewCopyForm(frmIdController, context);
+            },
+          ),
+        ),
+        _ListFormsWidget( frmTituloController: frmTituloController, form:widget.form ),
+      ],
+    ),
+  );
+}
   }
 
   class _ListFormsWidget extends StatelessWidget {
