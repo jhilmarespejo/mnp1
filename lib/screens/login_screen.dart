@@ -22,7 +22,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://mnp-bolivia.defensoria.gob.bo/api/api_iniciar'),
+        Uri.parse('https://test-mnp.defensoria.gob.bo/api/api_iniciar'),
         body: {'username': username, 'password': password},
       );
 

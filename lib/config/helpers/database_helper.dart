@@ -135,7 +135,7 @@ class DatabaseHelper {
     //         'agf': agfJson,
     //       }));
     // URL del web service
-    String url = 'https://mnp-bolivia.defensoria.gob.bo/api/api_guardar_respuestas';
+    String url = 'https://test-mnp.defensoria.gob.bo/api/api_guardar_respuestas';
       
     try {
         // Realizar la solicitud POST con el token de autorización
@@ -277,27 +277,31 @@ class DatabaseHelper {
   Future<void> loadFromApiAndSave() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
+
+    //Elimina todos los datos anteriores
     deleteData();
+
+    // Consulta las apis
     final response = await get(
       Uri.parse(
-        'https://mnp-bolivia.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
+        'https://test-mnp.defensoria.gob.bo/api/api_lista_tipos_establecimientos'),
         headers: {'Authorization': 'Bearer $token'},
     );
 
     final responseEstablishments = await get(
       Uri.parse(
-        'https://mnp-bolivia.defensoria.gob.bo/api/api_lista_establecimientos'),
+        'https://test-mnp.defensoria.gob.bo/api/api_lista_establecimientos'),
         headers: {'Authorization': 'Bearer $token'},
     );
 
     final responseVisitForms = await get(
       Uri.parse(
-        'https://mnp-bolivia.defensoria.gob.bo/api/api_visitas_formularios'),
+        'https://test-mnp.defensoria.gob.bo/api/api_visitas_formularios'),
         headers: {'Authorization': 'Bearer $token'},
     );
     final responseForm = await get(
       Uri.parse(
-        'https://mnp-bolivia.defensoria.gob.bo/api/api_formularios_cuestionario'),
+        'https://test-mnp.defensoria.gob.bo/api/api_formularios_cuestionario'),
         headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -305,6 +309,7 @@ class DatabaseHelper {
         responseEstablishments.statusCode == 200 &&
         responseVisitForms.statusCode == 200 &&
         responseForm.statusCode == 200) {
+      
       /* Guarda datos de los tipos de establecimientos */
       List<dynamic> apiData = json.decode(response.body);
       List<EstablishmentTypesModel> tiposEstabs =

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         // ChangeNotifierProvider(create: (context) => EstablishmentsProvider()),
       ],
       child: MaterialApp(
-        theme: AppTheme(selectedColor: 5).getTheme(),
+        theme: AppTheme(selectedColor: 3).getTheme(),
         navigatorKey: AppConstants.globalNavKey,
         debugShowCheckedModeBanner: false,
         home: const Splash(),

@@ -46,7 +46,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
                 children: [
                   Image.asset('assets/downloading.gif', width: 250, ),
                   const SizedBox( height: 0, ),
-                  const Text( 'Sincronizando datos...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  const Text( 'Descargando datos...', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ) 
                 ],
               )
@@ -66,7 +66,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
                 children: [
                   FilledButton.icon(
                     icon: const Icon(Icons.download),
-                    label: const Text('Sincronizar datos'),
+                    label: const Text('Descargar datos'),
                     onPressed: () {
                       _verifyUser(context);
                       // _showConfirmationDialogDowload(context);
@@ -156,7 +156,7 @@ class _ButtonsViewState extends State<_ButtonsView> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('No'),
+          child: const Text('No'),
         ),
       ],
     );
@@ -168,10 +168,10 @@ class _ButtonsViewState extends State<_ButtonsView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            const Text('Atención!'),
-            const Icon(Icons.warning, color: Colors.yellow), // Agregar un icono de advertencia
+            Text('Atención!'),
+            Icon(Icons.warning, color: Colors.yellow), // Agregar un icono de advertencia
           ],
         ),
         content: const Text('Asegúrese de que la información esté completa y sea confiable'),
@@ -208,12 +208,15 @@ class _ButtonsViewState extends State<_ButtonsView> {
       isUpLoading = true; // Inicia la animación de carga
     });
 
+    //consulta al databa_helper
     await tipoEst.loadFromApiAndSave();
 
     setState(() {
       isUpLoading = false; // Detiene la animación de carga cuando el proceso ha terminado
     });
   }
+
+
   void _uploadData() async {
     setState(() {
       isDownLoading = true; // Inicia la animación de carga
@@ -226,15 +229,4 @@ class _ButtonsViewState extends State<_ButtonsView> {
     });
   }
 
-  // void _navigateTipoEstablecimientos(BuildContext context) async {
-  //   await Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const EstablishmentTypesScreen()),
-  //   );
-  // }
-
-  // void _loaddata() async {
-  //   await tipoEst.loadFromApiAndSave();
-  //   //await establecimientos.loadFromApiAndSaveEstablishments();
-  // }
 }
